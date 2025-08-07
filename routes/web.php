@@ -129,6 +129,19 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/prints/{print}/export-pdf', 'exportPdf')->name('prints.exportPdf');
     });
 
+    // Production routes
+    Route::controller(ProductionController::class)->group(function () {
+        Route::get('/productions', 'index')->name('productions.index');
+        Route::get('/productions/create', 'create')->name('productions.create');
+        Route::post('/productions', 'store')->name('productions.store');
+        Route::get('/productions/{production}/show', 'show')->name('productions.show');
+        Route::get('/productions/{production}/edit', 'edit')->name('productions.edit');
+        Route::put('/productions/{production}', 'update')->name('productions.update');
+        Route::delete('/productions/{production}', 'destroy')->name('productions.destroy');
+         Route::get('/productions/{production}/export-excel', 'exportExcel')->name('productions.exportExcel');
+        Route::get('/productions/{production}/export-pdf', 'exportPdf')->name('productions.exportPdf');
+    });
+
     // Wash routes
     Route::controller(WashController::class)->group(function () {
         Route::get('/washes', 'index')->name('washes.index');
@@ -142,18 +155,6 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // Production routes
-    Route::controller(ProductionController::class)->group(function () {
-        Route::get('/productions', 'index')->name('productions.index');
-        Route::get('/productions/create', 'create')->name('productions.create');
-        Route::post('/productions', 'store')->name('productions.store');
-        Route::get('/productions/{production}/show', 'show')->name('productions.show');
-        Route::get('/productions/{production}/edit', 'edit')->name('productions.edit');
-        Route::put('/productions/{production}', 'update')->name('productions.update');
-        Route::delete('/productions/{production}', 'destroy')->name('productions.destroy');
-        Route::get('/productions/{production}/export', 'export')->name('productions.export');
-    });
-
-    // Production routes
     Route::controller(FinishingController::class)->group(function () {
         Route::get('/finishing', 'index')->name('finishing.index');
         Route::get('/finishing/create', 'create')->name('finishing.create');
@@ -164,8 +165,6 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/finishing/{finishing}', 'destroy')->name('finishing.destroy');
         Route::get('/finishing/{finishing}/export', 'export')->name('finishing.export');
     });
-
-
 
     // Notification routes
     Route::controller(NotificationController::class)->group(function () {
