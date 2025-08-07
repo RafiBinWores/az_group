@@ -1,33 +1,34 @@
 <x-layouts.app>
-    <x-slot name="title">Edit Garment Type</x-slot>
-    <x-slot name="pageTitle">Edit Garment Type</x-slot>
+    <x-slot name="title">Edit Factory Type</x-slot>
+    <x-slot name="pageTitle">Edit Factory Type</x-slot>
 
     <div class="card">
         <div class="card-body">
-            <form id="form" action="{{ route('garment_types.update', $garment->id) }}" method="POST"
+            <form id="form" action="{{ route('factories.update', $factory->id) }}" method="POST"
                 class="needs-validation" novalidate>
                 @csrf
                 @method('PUT')
 
                 <h4 class="mb-3 header-title">Basic Information</h4>
                 <div class="mb-3">
-                    <label class="form-label">Garment Type Name</label>
-                    <input type="text" class="form-control" name="garment_type" id="garment_type"
-                        value="{{ $garment->name }}" placeholder="Enter your garment type" required>
+                    <label class="form-label">Factory Name</label>
+                    <input type="text" class="form-control" name="name" id="name"
+                        value="{{ $factory->name }}" placeholder="Enter your factory name" required>
                     <p class="invalid-feedback"></p>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Status</label>
-                    <select name="garmentTypeStatus" id="garmentTypeStatus" class="form-select" required>
+                    <select name="factoryStatus" id="factoryStatus" class="form-select" required>
                         <option value="" disabled selected>Select status...</option>
-                        <option value="1" {{ $garment->status === 1 ? 'selected' : '' }}>Active</option>
-                        <option value="0" {{ $garment->status === 0 ? 'selected' : '' }}>Disable</option>
+                        <option value="1" {{ $factory->status === 1 ? 'selected' : '' }}>Active</option>
+                        <option value="0" {{ $factory->status === 0 ? 'selected' : '' }}>Disable</option>
+                        <p class="invalid-feedback"></p>
                     </select>
                     <p class="invalid-feedback"></p>
                 </div>
                 <button class="btn btn-primary me-2" type="submit">Update <i
                         class="mdi mdi-file-document-outline"></i></button>
-                <a href="{{ route('garment_types.index') }}" class="btn btn-secondary">Cancel <i
+                <a href="{{ route('factories.index') }}" class="btn btn-secondary">Cancel <i
                         class="mdi mdi-close"></i></a>
             </form>
         </div>
@@ -57,7 +58,7 @@
                             form.find(".invalid-feedback").html("");
 
                             if (response.data.status) {
-                                window.location.href = "{{ route('garment_types.index') }}";
+                                window.location.href = "{{ route('factories.index') }}";
                             } else {
                                 if (response.data.message) {
                                     Swal.fire({

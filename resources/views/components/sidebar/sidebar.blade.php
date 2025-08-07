@@ -95,6 +95,18 @@
                     </a>
                 </li>
                 <li>
+                    <a href="{{ route('factories.index') }}">
+                        <i class="fa-regular fa-industry-windows"></i>
+                        <span> Factories </span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('garment_types.index') }}">
+                        <i class="fa-regular fa-conveyor-belt-boxes"></i>
+                        <span> Lines </span>
+                    </a>
+                </li>
+                <li>
                     <a href="{{ route('users.index') }}">
                         <i class="mdi mdi-account-multiple-plus-outline"></i>
                         <span> Users </span>

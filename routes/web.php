@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\CuttingController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmbroideryController;
+use App\Http\Controllers\FactoryController;
 use App\Http\Controllers\FinishingController;
 use App\Http\Controllers\GarmentTypeController;
 use App\Http\Controllers\Notification\NotificationController;
@@ -101,7 +102,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/cutting-report/{cutting}/export-pdf', 'exportPdf')->name('cuttings.exportPdf');
     });
 
-    // Embroidery Or Print routes
+    // Embroidery routes
     Route::controller(EmbroideryController::class)->group(function () {
         Route::get('/embroideries', 'index')->name('embroideries.index');
         Route::get('/embroideries/create', 'create')->name('embroideries.create');
@@ -129,6 +130,17 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/prints/{print}/export-pdf', 'exportPdf')->name('prints.exportPdf');
     });
 
+    // Role routes
+    Route::controller(FactoryController::class)->group(function () {
+        Route::get('/factories', 'index')->name('factories.index');
+        Route::get('/factories/create', 'create')->name('factories.create');
+        Route::post('/factories', 'store')->name('factories.store');
+        Route::post('/factories/update-status', 'updateStatus')->name('factories.updateStatus');
+        Route::get('/factories/{factory}/edit', 'edit')->name('factories.edit');
+        Route::put('/factories/{factory}', 'update')->name('factories.update');
+        Route::delete('/factories/{factory}', 'destroy')->name('factories.destroy');
+    });
+
     // Production routes
     Route::controller(ProductionController::class)->group(function () {
         Route::get('/productions', 'index')->name('productions.index');
@@ -138,7 +150,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/productions/{production}/edit', 'edit')->name('productions.edit');
         Route::put('/productions/{production}', 'update')->name('productions.update');
         Route::delete('/productions/{production}', 'destroy')->name('productions.destroy');
-         Route::get('/productions/{production}/export-excel', 'exportExcel')->name('productions.exportExcel');
+        Route::get('/productions/{production}/export-excel', 'exportExcel')->name('productions.exportExcel');
         Route::get('/productions/{production}/export-pdf', 'exportPdf')->name('productions.exportPdf');
     });
 

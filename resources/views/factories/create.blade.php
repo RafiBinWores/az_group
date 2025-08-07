@@ -1,23 +1,23 @@
 <x-layouts.app>
-    <x-slot name="title">Role Create</x-slot>
-    <x-slot name="pageTitle">Role Create</x-slot>
+    <x-slot name="title">Create Factory</x-slot>
+    <x-slot name="pageTitle">Create Factory</x-slot>
 
     <div class="card">
         <div class="card-body">
-            <form id="form" action="{{ route('garment_types.store') }}" method="POST" class="needs-validation"
+            <form id="form" action="{{ route('factories.store') }}" method="POST" class="needs-validation"
                 novalidate>
                 @csrf
 
                 <h4 class="mb-3 header-title">Basic Information</h4>
                 <div class="mb-3">
-                    <label class="form-label">Garment Type Name</label>
-                    <input type="text" class="form-control" name="garment_type" id="name"
-                        placeholder="Enter your garment type" required>
+                    <label class="form-label">Factory Name</label>
+                    <input type="text" class="form-control" name="name" id="name"
+                        placeholder="Enter your factory" required>
                     <p class="invalid-feedback"></p>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Status</label>
-                    <select name="garmentTypeStatus" id="garmentTypeStatus" class="form-select" required>
+                    <select name="factoryStatus" id="factoryStatus" class="form-select" required>
                         <option value="" disabled selected>Select status...</option>
                         <option value="1">Active</option>
                         <option value="0">Disable</option>
@@ -26,7 +26,7 @@
                 </div>
                 <button class="btn btn-primary me-2" type="submit">Create <i
                         class="mdi mdi-file-document-outline"></i></button>
-                <a href="{{ route('garment_types.index') }}" class="btn btn-secondary">Cancel <i
+                <a href="{{ route('factories.index') }}" class="btn btn-secondary">Cancel <i
                         class="mdi mdi-close"></i></a>
             </form>
         </div>
@@ -51,7 +51,7 @@
                             $('button[type="submit"]').prop("disabled", false);
 
                             if (response.data.status) {
-                                 window.location.href = "{{ route('garment_types.index') }}";
+                                 window.location.href = "{{ route('factories.index') }}";
                             } else {
                                 let errors = response.data.errors || {};
 
