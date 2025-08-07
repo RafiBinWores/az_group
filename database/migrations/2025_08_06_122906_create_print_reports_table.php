@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('order_id')->constrained()->onDelete('cascade');
             $table->string('garment_type');
-            $table->date('date');
+            $table->date('garment_date');
             $table->json('print_data');
             $table->softDeletes();
             $table->timestamps();

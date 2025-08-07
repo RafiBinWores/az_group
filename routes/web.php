@@ -123,7 +123,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/prints/{print}/edit', 'edit')->name('prints.edit');
         Route::put('/prints/{print}', 'update')->name('prints.update');
         Route::delete('/prints/{print}', 'destroy')->name('prints.destroy');
-        Route::get('/prints/{print}/export', 'export')->name('prints.export');
+        Route::get('/prints/filter', 'filter')->name('prints.filter');
+        Route::get('/prints/{print}/export-excel', 'exportExcel')->name('prints.exportExcel');
+        Route::get('/prints/{print}/export-pdf', 'exportPdf')->name('prints.exportPdf');
     });
 
     // Wash routes
