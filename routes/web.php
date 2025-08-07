@@ -9,6 +9,7 @@ use App\Http\Controllers\EmbroideryController;
 use App\Http\Controllers\FactoryController;
 use App\Http\Controllers\FinishingController;
 use App\Http\Controllers\GarmentTypeController;
+use App\Http\Controllers\LineController;
 use App\Http\Controllers\Notification\NotificationController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PrintController;
@@ -130,7 +131,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/prints/{print}/export-pdf', 'exportPdf')->name('prints.exportPdf');
     });
 
-    // Role routes
+    // Factory routes
     Route::controller(FactoryController::class)->group(function () {
         Route::get('/factories', 'index')->name('factories.index');
         Route::get('/factories/create', 'create')->name('factories.create');
@@ -139,6 +140,17 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/factories/{factory}/edit', 'edit')->name('factories.edit');
         Route::put('/factories/{factory}', 'update')->name('factories.update');
         Route::delete('/factories/{factory}', 'destroy')->name('factories.destroy');
+    });
+
+    // Line routes
+    Route::controller(LineController::class)->group(function () {
+        Route::get('/lines', 'index')->name('lines.index');
+        Route::get('/lines/create', 'create')->name('lines.create');
+        Route::post('/lines', 'store')->name('lines.store');
+        Route::post('/lines/update-status', 'updateStatus')->name('lines.updateStatus');
+        Route::get('/lines/{line}/edit', 'edit')->name('lines.edit');
+        Route::put('/lines/{line}', 'update')->name('lines.update');
+        Route::delete('/lines/{line}', 'destroy')->name('lines.destroy');
     });
 
     // Production routes

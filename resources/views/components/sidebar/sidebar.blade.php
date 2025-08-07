@@ -101,7 +101,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="{{ route('garment_types.index') }}">
+                    <a href="{{ route('lines.index') }}">
                         <i class="fa-regular fa-conveyor-belt-boxes"></i>
                         <span> Lines </span>
                     </a>
