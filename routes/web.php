@@ -8,6 +8,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmbroideryController;
 use App\Http\Controllers\FinishingController;
 use App\Http\Controllers\GarmentTypeController;
+use App\Http\Controllers\Notification\NotificationController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PrintController;
 use App\Http\Controllers\ProductionController;
@@ -162,5 +163,14 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/finishing/{finishing}', 'update')->name('finishing.update');
         Route::delete('/finishing/{finishing}', 'destroy')->name('finishing.destroy');
         Route::get('/finishing/{finishing}/export', 'export')->name('finishing.export');
+    });
+
+
+
+    // Notification routes
+    Route::controller(NotificationController::class)->group(function () {
+        Route::post('/notifications/{id}/read', 'markAsRead')->name('notifications.read');
+        Route::post('/notifications/read-all', 'markAllAsRead')->name('notifications.readAll');
+        Route::get('/notifications', 'index')->name('notifications.index');
     });
 });

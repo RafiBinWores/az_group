@@ -8,6 +8,7 @@ use App\Http\Requests\PrintReport\PrintReportUpdateRequest;
 use App\Models\Cutting;
 use App\Models\Order;
 use App\Models\PrintReport;
+use App\Notifications\PrintCreatedNotification;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -120,12 +121,18 @@ class PrintController extends Controller
         }
 
         // Create report
-        PrintReport::create([
+        $print = PrintReport::create([
             'order_id' => $request->order_id,
             'garment_type' => $request->garment_type,
             'print_data' => $request->print_data,
             'date' => $request->date,
         ]);
+
+        $print = $print->fresh('order.user');
+        $order = $print->order;
+        if ($order && $order->user) {
+            $order->user->notify(new PrintCreatedNotification($print));
+        }
 
         session()->flash('success', 'Print report added successfully.');
         return response()->json([

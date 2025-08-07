@@ -90,97 +90,61 @@
             <a class="nav-link dropdown-toggle waves-effect waves-light" data-bs-toggle="dropdown" href="#"
                 role="button" aria-haspopup="false" aria-expanded="false">
                 <i class="fe-bell noti-icon"></i>
-                <span class="badge bg-danger rounded-circle noti-icon-badge">9</span>
+                <span class="badge bg-danger rounded-circle noti-icon-badge">
+                    {{ auth()->user()->unreadNotifications->count() }}
+                </span>
             </a>
             <div class="dropdown-menu dropdown-menu-end dropdown-lg">
-
-                <!-- item-->
                 <div class="dropdown-item noti-title">
                     <h5 class="m-0">
                         <span class="float-end">
-                            <a href="" class="text-dark">
-                                <small>Clear All</small>
-                            </a>
-                        </span>Notification
+                            @if (auth()->user()->unreadNotifications->count())
+                                <form method="POST" action="{{ route('notifications.readAll') }}">
+                                    @csrf
+                                    <button type="submit" class="btn btn-link text-dark p-0" style="font-size:12px;">
+                                        <small>Clear All</small>
+                                    </button>
+                                </form>
+                            @endif
+                        </span>
+                        Notification
                     </h5>
                 </div>
-
-                <div class="noti-scroll" data-simplebar>
-
-                    <!-- item-->
-                    <a href="javascript:void(0);" class="dropdown-item notify-item active">
-                        <div class="notify-icon">
-                            <img src="{{ asset('assets/images/users/user-1.jpg') }}" class="img-fluid rounded-circle"
-                                alt="" />
-                        </div>
-                        <p class="notify-details">Cristina Pride</p>
-                        <p class="text-muted mb-0 user-msg">
-                            <small>Hi, How are you? What about our next meeting</small>
-                        </p>
-                    </a>
-
-                    <!-- item-->
-                    <a href="javascript:void(0);" class="dropdown-item notify-item">
-                        <div class="notify-icon bg-primary">
-                            <i class="mdi mdi-comment-account-outline"></i>
-                        </div>
-                        <p class="notify-details">Caleb Flakelar commented on Admin
-                            <small class="text-muted">1 min ago</small>
-                        </p>
-                    </a>
-
-                    <!-- item-->
-                    <a href="javascript:void(0);" class="dropdown-item notify-item">
-                        <div class="notify-icon">
-                            <img src="{{ asset('assets/images/users/user-4.jpg') }}" class="img-fluid rounded-circle"
-                                alt="" />
-                        </div>
-                        <p class="notify-details">Karen Robinson</p>
-                        <p class="text-muted mb-0 user-msg">
-                            <small>Wow ! this admin looks good and awesome design</small>
-                        </p>
-                    </a>
-
-                    <!-- item-->
-                    <a href="javascript:void(0);" class="dropdown-item notify-item">
-                        <div class="notify-icon bg-warning">
-                            <i class="mdi mdi-account-plus"></i>
-                        </div>
-                        <p class="notify-details">New user registered.
-                            <small class="text-muted">5 hours ago</small>
-                        </p>
-                    </a>
-
-                    <!-- item-->
-                    <a href="javascript:void(0);" class="dropdown-item notify-item">
-                        <div class="notify-icon bg-info">
-                            <i class="mdi mdi-comment-account-outline"></i>
-                        </div>
-                        <p class="notify-details">Caleb Flakelar commented on Admin
-                            <small class="text-muted">4 days ago</small>
-                        </p>
-                    </a>
-
-                    <!-- item-->
-                    <a href="javascript:void(0);" class="dropdown-item notify-item">
-                        <div class="notify-icon bg-secondary">
-                            <i class="mdi mdi-heart"></i>
-                        </div>
-                        <p class="notify-details">Carlos Crouch liked
-                            <b>Admin</b>
-                            <small class="text-muted">13 days ago</small>
-                        </p>
-                    </a>
+                <div class="noti-scroll" data-simplebar style="max-height:300px;">
+                    @forelse(auth()->user()->notifications()->latest()->limit(10)->get() as $notification)
+                        <form id="mark-read-{{ $notification->id }}"
+                            action="{{ route('notifications.read', $notification->id) }}" method="POST"
+                            style="display:none;">
+                            @csrf
+                        </form>
+                        <a href="{{ route('cuttings.show', $notification->data['cutting_id'] ?? 0) }}"
+                            class="dropdown-item notify-item {{ !$notification->read_at ? 'active' : '' }}"
+                            @if (!$notification->read_at) onclick="event.preventDefault(); document.getElementById('mark-read-{{ $notification->id }}').submit();" @endif>
+                            <p class="notify-details">
+                                {{ $notification->data['message'] ?? 'New Notification' }}
+                                {{-- @if (!$notification->read_at)
+                            <span class="badge bg-success ms-1">New</span>
+                        @endif --}}
+                            </p>
+                            <p class="text-muted mb-0 user-msg">
+                                <small>{{ \Carbon\Carbon::parse($notification->created_at)->diffForHumans() }}</small>
+                            </p>
+                        </a>
+                    @empty
+                        <div class="dropdown-item text-muted text-center">No notifications found.</div>
+                    @endforelse
                 </div>
-
                 <!-- All-->
-                <a href="javascript:void(0);" class="dropdown-item text-center text-primary notify-item notify-all">
+                <a href="{{ route('notifications.index') }}"
+                    class="dropdown-item text-center text-primary notify-item notify-all">
                     View all
                     <i class="fe-arrow-right"></i>
                 </a>
-
             </div>
         </li>
+
+
+
 
         <li class="dropdown notification-list topbar-dropdown">
             <a class="nav-link dropdown-toggle nav-user me-0 waves-effect waves-light" data-bs-toggle="dropdown"

@@ -8,6 +8,7 @@ use App\Http\Requests\Embroidery\EmbroideryUpdateRequest;
 use App\Models\Cutting;
 use App\Models\Embroidery;
 use App\Models\Order;
+use App\Notifications\EmbroideryCreatedNotification;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -120,12 +121,18 @@ class EmbroideryController extends Controller
         }
 
         // Create report
-        Embroidery::create([
+        $embroidery = Embroidery::create([
             'order_id' => $request->order_id,
             'garment_type' => $request->garment_type,
             'embroidery_data' => $request->embroidery_data,
             'date' => $request->date,
         ]);
+
+        $embroidery = $embroidery->fresh('order.user');
+        $order = $embroidery->order;
+        if ($order && $order->user) {
+            $order->user->notify(new EmbroideryCreatedNotification($embroidery));
+        }
 
         session()->flash('success', 'Embroidery report added successfully.');
         return response()->json([

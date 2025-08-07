@@ -7,6 +7,7 @@ use App\Http\Requests\Cutting\CuttingStoreRequest;
 use App\Http\Requests\Cutting\CuttingUpdateRequest;
 use App\Models\Cutting;
 use App\Models\Order;
+use App\Notifications\CuttingCreatedNotification;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -23,7 +24,7 @@ class CuttingController extends Controller
         if ($request->ajax()) {
             $cuttings = Cutting::with('order')->latest();
 
-                        if ($request->range) {
+            if ($request->range) {
                 switch ($request->range) {
                     case 'today':
                         $cuttings->whereDate('date', today());
@@ -101,12 +102,21 @@ class CuttingController extends Controller
     {
 
         // Create Cutting report
-        Cutting::create([
+        $cutting = Cutting::create([
             'order_id' => $request->order_id,
             'garment_type' => $request->garment_type,
             'date' => $request->date,
             'cutting' => $request->cutting,
         ]);
+
+        // Eager load order.user
+        $cutting = $cutting->fresh('order.user');
+        $order = $cutting->order;
+
+        if ($order && $order->user) {
+            $order->user->notify(new CuttingCreatedNotification($cutting));
+        }
+
 
         session()->flash('success', 'Cutting report added successfully.');
         return response()->json([
