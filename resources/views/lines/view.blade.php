@@ -1,6 +1,6 @@
 <x-layouts.app>
-    <x-slot name="title">Factory</x-slot>
-    <x-slot name="pageTitle">Factory</x-slot>
+    <x-slot name="title">Line</x-slot>
+    <x-slot name="pageTitle">Line</x-slot>
 
     @push('styles')
         <link href="{{ asset('assets/libs/datatables.net-bs5/css/dataTables.bootstrap5.min.css') }}" rel="stylesheet"
