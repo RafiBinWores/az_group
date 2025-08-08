@@ -120,18 +120,18 @@
                     })
                     .then(function(response) {
                         $('#table').DataTable().ajax.reload(null, false);
-                         Swal.fire({
-                                toast: true,
-                                position: 'top-right',
-                                icon: response.data.status ? 'success' : 'warning',
-                                title: response.data.message,
-                                showConfirmButton: false,
-                                timer: 2500,
-                                timerProgressBar: true,
-                                customClass: {
-                                    popup: 'colored-toast'
-                                }
-                            });
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-right',
+                            icon: response.data.status ? 'success' : 'warning',
+                            title: response.data.message,
+                            showConfirmButton: false,
+                            timer: 2500,
+                            timerProgressBar: true,
+                            customClass: {
+                                popup: 'colored-toast'
+                            }
+                        });
 
                     })
                     .catch(function() {
