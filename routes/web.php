@@ -178,7 +178,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/washes/{wash}/edit', 'edit')->name('washes.edit');
         Route::put('/washes/{wash}', 'update')->name('washes.update');
         Route::delete('/washes/{wash}', 'destroy')->name('washes.destroy');
-        Route::get('/washes/{wash}/export', 'export')->name('washes.export');
+        Route::get('/washes/{wash}/export-excel', 'exportExcel')->name('washes.exportExcel');
+        Route::get('/washes/{wash}/export-pdf', 'exportPdf')->name('washes.exportPdf');
     });
 
     // Finishing routes

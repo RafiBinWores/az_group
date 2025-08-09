@@ -19,7 +19,7 @@
                                     <i class="mdi mdi-trending-{{ $cuttingDirection }}"></i>
                                 </span>
                                 <h2 class="fw-normal mb-1">{{ $totalLatest }}</h2>
-                                <p class="text-muted">Latest Cutting</p>
+                                <p class="text-muted">Latest  Cutting (<small>{{ $latestReportDay }}</small>)</p>
                             </div>
                         </div>
                     </div>
