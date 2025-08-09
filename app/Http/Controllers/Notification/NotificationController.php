@@ -22,6 +22,8 @@ class NotificationController extends Controller
             return redirect()->route('prints.show', $data['print_id']);
         } elseif (isset($data['wash_id'])) {
             return redirect()->route('washes.show', $data['wash_id']);
+        } elseif (isset($data['production_id'])) {
+            return redirect()->route('productions.show', $data['production_id']);
         }
         return back();
     }

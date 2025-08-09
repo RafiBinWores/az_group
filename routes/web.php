@@ -181,7 +181,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/washes/{wash}/export', 'export')->name('washes.export');
     });
 
-    // Production routes
+    // Finishing routes
     Route::controller(FinishingController::class)->group(function () {
         Route::get('/finishing', 'index')->name('finishing.index');
         Route::get('/finishing/create', 'create')->name('finishing.create');

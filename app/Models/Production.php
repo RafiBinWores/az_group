@@ -11,9 +11,9 @@ class Production extends Model
 
     protected $fillable = [
         'order_id',
-        'cutting_id',
-        'embroidery_id',
-        'print_id',
+        // 'cutting_id',
+        // 'embroidery_id',
+        // 'print_id',
         'garment_type',
         'production_data',
         'date'
@@ -24,7 +24,7 @@ class Production extends Model
     ];
 
     // Each production belongs to one order
-    public function orders()
+    public function order()
     {
         return $this->belongsTo(Order::class);
     }

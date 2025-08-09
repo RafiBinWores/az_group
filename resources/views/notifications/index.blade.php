@@ -25,6 +25,8 @@
                         $url = route('notifications.read', $notification->id);
                     } elseif (isset($data['wash_id'])) {
                         $url = route('notifications.read', $notification->id);
+                    } elseif (isset($data['production_id'])) {
+                        $url = route('notifications.read', $notification->id);
                     } else {
                         $url = '#';
                     }
@@ -45,7 +47,7 @@
                     </form>
                 @else
                     <a href="@php
-if(isset($data['cutting_id'])) {
+                        if(isset($data['cutting_id'])) {
                             echo route('cuttings.show', $data['cutting_id']);
                         } elseif(isset($data['embroidery_id'])) {
                             echo route('embroideries.show', $data['embroidery_id']);
@@ -53,6 +55,8 @@ if(isset($data['cutting_id'])) {
                             echo route('prints.show', $data['print_id']);
                         } elseif(isset($data['wash_id'])) {
                             echo route('washes.show', $data['wash_id']);
+                        } elseif(isset($data['production_id'])) {
+                            echo route('productions.show', $data['production_id']);
                         } else {
                             echo '#';
                         } @endphp"

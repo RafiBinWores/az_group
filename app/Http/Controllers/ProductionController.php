@@ -2,11 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\ProductionExport;
+use App\Http\Requests\Production\ProductionStoreRequest;
+use App\Http\Requests\Production\ProductionUpdateRequest;
 use App\Models\Cutting;
+use App\Models\Factory;
+use App\Models\Line;
 use App\Models\Order;
 use App\Models\Production;
+use App\Notifications\ProductionCreatedNotification;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
 class ProductionController extends Controller
@@ -58,17 +66,29 @@ class ProductionController extends Controller
                 ->editColumn('garment_type', function ($row) {
                     return $row->garment_type ?? 'N/A';
                 })
+                ->addColumn('total_cutting_qty', function ($row) {
+                    $arr = is_array($row->production_data) ? $row->production_data : json_decode($row->production_data, true);
+                    return collect($arr)->sum('cutting_qty') ?? 0;
+                })
                 ->addColumn('total_order_qty', function ($row) {
-                    $arr = is_array($row->print_data) ? $row->print_data : json_decode($row->print_data, true);
+                    $arr = is_array($row->production_data) ? $row->production_data : json_decode($row->production_data, true);
                     return collect($arr)->sum('order_qty') ?? 0;
                 })
-                ->addColumn('total_send_qty', function ($row) {
-                    $arr = is_array($row->print_data) ? $row->print_data : json_decode($row->print_data, true);
-                    return collect($arr)->sum('send') ?? 0;
+                ->addColumn('input_qty', function ($row) {
+                    $arr = is_array($row->production_data) ? $row->production_data : json_decode($row->production_data, true);
+                    return collect($arr)->sum('input') ?? 0;
                 })
-                ->addColumn('total_receive_qty', function ($row) {
-                    $arr = is_array($row->print_data) ? $row->print_data : json_decode($row->print_data, true);
-                    return collect($arr)->sum('received') ?? 0;
+                ->addColumn('total_input_qty', function ($row) {
+                    $arr = is_array($row->production_data) ? $row->production_data : json_decode($row->production_data, true);
+                    return collect($arr)->sum('total_input') ?? 0;
+                })
+                ->addColumn('output_qty', function ($row) {
+                    $arr = is_array($row->production_data) ? $row->production_data : json_decode($row->production_data, true);
+                    return collect($arr)->sum('output') ?? 0;
+                })
+                ->addColumn('total_output_qty', function ($row) {
+                    $arr = is_array($row->production_data) ? $row->production_data : json_decode($row->production_data, true);
+                    return collect($arr)->sum('total_output') ?? 0;
                 })
                 ->editColumn('date', function ($row) {
                     return Carbon::parse($row->date)->format('M d, Y');
@@ -93,13 +113,16 @@ class ProductionController extends Controller
         // Get latest cutting per order (map by order_id)
         $latestCuttings = Cutting::latest('date')->get()->groupBy('order_id')->map->first();
 
-        return view('productions.create', compact('orders', 'latestCuttings'));
+        $factories = Factory::all();
+        $lines = Line::all();
+
+        return view('productions.create', compact('orders', 'latestCuttings', 'factories', 'lines'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(PrintReportStoreRequest $request)
+    public function store(ProductionStoreRequest $request)
     {
         // Get latest IDs
         $latestCutting = Cutting::where('order_id', $request->order_id)
@@ -115,61 +138,63 @@ class ProductionController extends Controller
         }
 
         // Create report
-        $print = PrintReport::create([
+        $production = Production::create([
             'order_id' => $request->order_id,
             'garment_type' => $request->garment_type,
-            'print_data' => $request->print_data,
+            'production_data' => $request->production_data,
             'date' => $request->date,
         ]);
 
-        $print = $print->fresh('order.user');
-        $order = $print->order;
+        $production = $production->fresh('order.user');
+        $order = $production->order;
         if ($order && $order->user) {
-            $order->user->notify(new PrintCreatedNotification($print));
+            $order->user->notify(new ProductionCreatedNotification($production));
         }
 
-        session()->flash('success', 'Print report added successfully.');
+        session()->flash('success', 'Production report added successfully.');
         return response()->json([
             'status' => true,
-            'message' => 'Print report added successfully.',
+            'message' => 'Production report added successfully.',
         ]);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show($print)
+    public function show($production)
     {
-        $print = PrintReport::with('order')->findOrFail($print);
+        $production = Production::with('order')->findOrFail($production);
 
-        return view('productions.show', compact('print'));
+        return view('productions.show', compact('production'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit($print)
+    public function edit($production)
     {
-        $print = PrintReport::findOrFail($print);
+        $production = Production::findOrFail($production);
         $orders = Order::with(['garmentTypes'])->get();
 
         $latestCuttings = Cutting::latest('date')->get()->groupBy('order_id')->map->first();
+        $factories = Factory::all();
+        $lines = Line::all();
 
-        return view('productions.edit', compact('print', 'orders', 'latestCuttings'));
+        return view('productions.edit', compact('production', 'orders', 'latestCuttings', 'factories', 'lines'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(PrintReportUpdateRequest $request, $print)
+    public function update(ProductionUpdateRequest $request, $production)
     {
-        $print = PrintReport::findOrFail($print);
+        $production = Production::findOrFail($production);
 
         // Compare the array directly
-        $orderChanged = $print->order_id != $request->order_id;
-        $embroideryChanged = $print->print_data != $request->print_data;
-        $dateChanged = $print->date != $request->date;
-        $garmentTypeChanged = $print->garment_type != $request->garment_type;
+        $orderChanged = $production->order_id != $request->order_id;
+        $embroideryChanged = $production->production_data != $request->production_data;
+        $dateChanged = $production->date != $request->date;
+        $garmentTypeChanged = $production->garment_type != $request->garment_type;
 
         if (!$orderChanged && !$embroideryChanged && !$dateChanged && !$garmentTypeChanged) {
             return response()->json([
@@ -179,56 +204,56 @@ class ProductionController extends Controller
         }
 
         // Update report
-        $print->update([
+        $production->update([
             'order_id' => $request->order_id,
-            'print_data' => $request->print_data,
+            'production_data' => $request->production_data,
             'garment_type' => $request->garment_type,
             'date' => $request->date,
         ]);
 
-        session()->flash('success', 'Print report updated successfully.');
+        session()->flash('success', 'Production report updated successfully.');
         return response()->json([
             'status' => true,
-            'message' => 'Print Report update successfully.',
+            'message' => 'Production Report update successfully.',
         ]);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($print)
+    public function destroy($production)
     {
-        $print = PrintReport::findOrFail($print);
+        $production = Production::findOrFail($production);
 
-        $print->delete();
+        $production->delete();
 
         if (request()->ajax() || request()->wantsJson()) {
             return response()->json([
                 'status' => true,
-                'message' => 'Print report deleted successfully.'
+                'message' => 'Production report deleted successfully.'
             ]);
         }
 
-        return redirect()->route('prints.index')->with('success', 'Print report deleted successfully');
+        return redirect()->route('productions.index')->with('success', 'Production report deleted successfully');
     }
 
     // Excel download
-    public function exportExcel($print)
+    public function exportExcel($production)
     {
-        $print = PrintReport::with('order')->findOrFail($print);
-        $fileName = 'print_report_' . $print->order->style_no . '_' . now()->format('Ymd_His') . '.xlsx';
+        $production = Production::with('order')->findOrFail($production);
+        $fileName = 'production_report_' . $production->order->style_no . '_' . now()->format('Ymd_His') . '.xlsx';
 
-        return Excel::download(new PrintExport($print), $fileName);
+        return Excel::download(new ProductionExport($production), $fileName);
     }
 
     // PDF download
-    public function exportPdf($print)
+    public function exportPdf($production)
     {
-        $print = PrintReport::with('order')->findOrFail($print);
+        $production = Production::with('order')->findOrFail($production);
 
-        $pdf = Pdf::loadView('productions.partials.report_pdf', compact('print'))
-            ->setPaper('a4', 'portrait');
+        $pdf = Pdf::loadView('productions.partials.report_pdf', compact('production'))
+            ->setPaper('a4', 'landscape');
 
-        return $pdf->download('print_report_' . $print->order->style_no . '_' . now()->format('Ymd_His') . '.pdf');
+        return $pdf->download('production_report_' . $production->order->style_no . '_' . now()->format('Ymd_His') . '.pdf');
     }
 }

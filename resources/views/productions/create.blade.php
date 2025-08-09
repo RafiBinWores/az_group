@@ -1,20 +1,21 @@
 <x-layouts.app>
     {{-- Page title --}}
-    <x-slot name="title">Create Embroidery Report</x-slot>
+    <x-slot name="title">Create Production Report</x-slot>
     {{-- Page header --}}
-    <x-slot name="pageTitle">Create Embroidery Report</x-slot>
+    <x-slot name="pageTitle">Create Production Report</x-slot>
 
 
     {{-- Page Content --}}
     <div class="card">
         <div class="card-body">
-            <form id="form" action="{{ route('prints.store') }}" method="POST">
+            <form id="form" action="{{ route('productions.store') }}" method="POST" class="needs-validation"
+                novalidate>
                 @csrf
 
                 <!-- Style No -->
                 <div class="mb-3">
                     <label class="form-label fw-semibold">Style No</label>
-                    <select name="order_id" id="style-select" class="form-select mt-1" autocomplete="off">
+                    <select name="order_id" id="style-select" class="form-select mt-1" autocomplete="off" required>
                         <option value="">Select a style...</option>
                         @foreach ($orders as $order)
                             <option value="{{ $order->id }}" data-colors='@json($order->color_qty)'
@@ -29,7 +30,7 @@
                 <!-- Garment Type -->
                 <div class="mb-3">
                     <label class="form-label fw-semibold">Garment Type</label>
-                    <select name="garment_type" id="garment_type" class="form-select mt-1">
+                    <select name="garment_type" id="garment_type" class="form-select mt-1" required>
                         <option value="">Select...</option>
                     </select>
                     <div class="error text-danger small mt-1"></div>
@@ -38,21 +39,20 @@
                 <!-- Date -->
                 <div class="mb-3">
                     <label class="form-label fw-semibold">Date</label>
-                    <input type="date" name="date" id="date" class="form-control mt-1">
+                    <input type="date" name="date" id="date" class="form-control mt-1" required>
                     <div class="error text-danger small mt-1"></div>
                 </div>
 
                 <!-- Cutting Fields (dynamic) -->
                 <div id="add-fields" class="mb-3">
-                    <label class="form-label fw-semibold">Print Report</label>
+                    <label class="form-label fw-semibold">Production Report</label>
                     <div class="error text-danger small mt-1"></div>
                 </div>
 
                 <!-- Buttons -->
                 <button class="btn btn-primary me-2" type="submit">Create <i
                         class="mdi mdi-file-document-outline"></i></button>
-                <a href="{{ route('prints.index') }}" class="btn btn-secondary">Cancel <i
-                        class="mdi mdi-close"></i></a>
+                <a href="{{ route('prints.index') }}" class="btn btn-secondary">Cancel <i class="mdi mdi-close"></i></a>
             </form>
         </div>
     </div>
@@ -61,6 +61,8 @@
         <script>
             // Pass the latest cutting data from PHP to JS
             const latestCuttings = @json($latestCuttings);
+            const factories = @json($factories);
+            const lines = @json($lines);
 
             // Style select change handler
             document.getElementById('style-select').addEventListener('change', function() {
@@ -80,15 +82,21 @@
                     });
                 }
 
-                // Print fields
+                // Production fields
                 const fieldsDiv = document.getElementById('add-fields');
-                fieldsDiv.innerHTML = `<label class="form-label fw-semibold">Print Report</label>
+                fieldsDiv.innerHTML = `<label class="form-label fw-semibold">Production Report</label>
                                          <div class="error text-danger small mt-1"></div>`;
 
                 let colors = selected.getAttribute('data-colors');
                 let selectedOrderId = this.value;
                 // Use string key for JS object safety
-                let cuttingData = latestCuttings[selectedOrderId + ""] ? latestCuttings[selectedOrderId + ""].cutting : [];
+                let cuttingData = latestCuttings[selectedOrderId + ""] ? latestCuttings[selectedOrderId + ""].cutting :
+                    [];
+
+                function renderOptions(list, valueKey, labelKey) {
+                    return list.map(item => `<option value="${item[valueKey]}">${item[labelKey]}</option>`).join('');
+                }
+
 
                 if (colors) {
                     try {
@@ -96,37 +104,58 @@
                     } catch (e) {
                         colors = [];
                     }
+                    let sn = 1;
                     colors.forEach((row, idx) => {
                         // Find latest cutting qty for this color
                         let cuttingRow = cuttingData.find(c => c.color === row.color);
                         let lastCuttingQty = cuttingRow ? cuttingRow.cutting_qty : '';
 
                         const div = document.createElement('div');
-                        div.className = 'row g-2 align-items-center px-2 pb-2 border mb-2 rounded';
+                        div.className =
+                            'row g-2 align-items-center border-primary px-2 pb-2 border mb-2 rounded';
                         div.innerHTML = `
-                                        <div class="col-6 col-md-4 col-lg-2">
+                                        <div class="col-6 col-md-3 col-lg-3">
                                             <span class="fw-semibold">Color</span>
-                                            <input type="text" readonly value="${row.color}" class="form-control bg-soft-secondary" name="print_data[${idx}][color]">
+                                            <input type="text" readonly value="${row.color}" class="form-control bg-soft-secondary" name="production_data[${idx}][color]">
                                         </div>
-                                        <div class="col-6 col-md-4 col-lg-2">
+                                        <div class="col-6 col-md-3 col-lg-3 d-none">
                                             <span class="fw-semibold">Order Qty</span>
-                                            <input type="number" readonly min="0" placeholder="Order Qty" value="${row.qty}" class="form-control bg-soft-secondary" name="print_data[${idx}][order_qty]">
+                                            <input type="number" readonly min="0" placeholder="Order Qty" value="${row.qty}" class="form-control bg-soft-secondary" name="production_data[${idx}][order_qty]">
                                         </div>
-                                        <div class="col-6 col-md-4 col-lg-2">
+                                        <div class="col-6 col-md-3 col-lg-3">
                                             <span class="fw-semibold">Cutting Qty</span>
-                                            <input type="number" readonly min="0" placeholder="Cutting Qty" value="${lastCuttingQty || 'N/A'}" class="form-control bg-soft-secondary" name="print_data[${idx}][cutting_qty]">
+                                            <input type="number" readonly min="0" placeholder="Cutting Qty" value="${lastCuttingQty || 'N/A'}" class="form-control bg-soft-secondary" name="production_data[${idx}][cutting_qty]" required>
                                         </div>
-                                        <div class="col-6 col-md-4 col-lg-2">
+                                        <div class="col-6 col-md-3 col-lg-3">
                                             <span class="fw-semibold">Factory</span>
-                                            <input type="text" placeholder="Factory" class="form-control" name="print_data[${idx}][factory]">
+                                             <select name="production_data[${idx}][factory]" id="factory" class="form-select" required>
+                                                <option value="" disabled selected>Select...</option>
+                                                ${renderOptions(factories, 'name', 'name')}
+                                            </select>
+                                           
                                         </div>
-                                        <div class="col-6 col-md-4 col-lg-2">
-                                            <span class="fw-semibold">Send</span>
-                                            <input type="number" min="0" placeholder="Send" class="form-control" name="print_data[${idx}][send]">
+                                        <div class="col-6 col-md-3 col-lg-3">
+                                            <span class="fw-semibold">Line</span>
+                                            <select name="production_data[${idx}][line]" id="line" class="form-select" required>
+                                                <option value="">Select...</option>
+                                                ${renderOptions(lines, 'name', 'name')}
+                                            </select>
                                         </div>
-                                        <div class="col-6 col-md-4 col-lg-2">
-                                            <span class="fw-semibold">Received</span>
-                                            <input type="number" min="0" placeholder="Received" class="form-control" name="print_data[${idx}][received]">
+                                        <div class="col-6 col-md-3 col-lg-3">
+                                            <span class="fw-semibold">Input</span>
+                                            <input type="number" min="0" placeholder="Input" class="form-control" name="production_data[${idx}][input]">
+                                        </div>
+                                        <div class="col-6 col-md-3 col-lg-3">
+                                            <span class="fw-semibold">Total Input</span>
+                                            <input type="number" min="0" placeholder="Total Input" class="form-control" name="production_data[${idx}][total_input]">
+                                        </div>
+                                        <div class="col-6 col-md-3 col-lg-3">
+                                            <span class="fw-semibold">Output</span>
+                                            <input type="number" min="0" placeholder="Output" class="form-control" name="production_data[${idx}][output]">
+                                        </div>
+                                        <div class="col-6 col-md-3 col-lg-3">
+                                            <span class="fw-semibold">Total Output</span>
+                                            <input type="number" min="0" placeholder="Total Output" class="form-control" name="production_data[${idx}][total_output]">
                                         </div>
                                     `;
                         fieldsDiv.insertBefore(div, fieldsDiv.querySelector('.error'));
@@ -155,7 +184,7 @@
                         success: function(response) {
                             $('button[type="submit"]').prop("disabled", false);
                             if (response.status) {
-                                window.location.href = "{{ route('prints.index') }}";
+                                window.location.href = "{{ route('productions.index') }}";
                             } else {
                                 if (response.message) {
                                     Swal.fire({

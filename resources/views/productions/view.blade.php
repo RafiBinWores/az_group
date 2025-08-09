@@ -49,12 +49,15 @@
                         <thead>
                             <tr>
                                 <th>SL</th>
-                                <th>Style No</th>
                                 <th>Buyer</th>
+                                <th>Style No</th>
                                 <th>Garment Type</th>
                                 <th>Order Qty</th>
-                                <th>Send Qty</th>
-                                <th>Received Qty</th>
+                                <th>Cutting Qty</th>
+                                <th>Input</th>
+                                <th>Total Input</th>
+                                <th>Output</th>
+                                <th>Total Output</th>
                                 <th>Date</th>
                                 <th>Actions</th>
                             </tr>
@@ -96,13 +99,13 @@
                             orderable: false,
                             searchable: false
                         },
+                                                {
+                            data: 'order.buyer_name',
+                            name: 'order.buyer_name'
+                        },
                         {
                             data: 'order.style_no',
                             name: 'order.style_no'
-                        },
-                        {
-                            data: 'order.buyer_name',
-                            name: 'order.buyer_name'
                         },
                         {
                             data: 'garment_type',
@@ -110,15 +113,27 @@
                         },
                         {
                             data: 'total_order_qty',
-                            name: 'total_order_qty'
+                            name: 'total_order_qty',
                         },
                         {
-                            data: 'total_send_qty',
-                            name: 'total_send_qty'
+                            data: 'total_cutting_qty',
+                            name: 'total_cutting_qty',
                         },
                         {
-                            data: 'total_receive_qty',
-                            name: 'total_receive_qty'
+                            data: 'input_qty',
+                            name: 'input_qty'
+                        },
+                        {
+                            data: 'total_input_qty',
+                            name: 'total_input_qty'
+                        },
+                        {
+                            data: 'output_qty',
+                            name: 'output_qty'
+                        },
+                        {
+                            data: 'total_output_qty',
+                            name: 'total_output_qty'
                         },
                         {
                             data: 'date',
