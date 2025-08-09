@@ -5,12 +5,24 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Role\StoreRoleRequest;
 use App\Http\Requests\Role\UpdateRoleRequest;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Yajra\DataTables\Facades\DataTables;
 
-class RoleController extends Controller
+class RoleController extends Controller implements HasMiddleware
 {
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:view-users',   only: ['index', 'show']),
+            new Middleware('permission:create-users', only: ['create', 'store']),
+            new Middleware('permission:edit-users',   only: ['edit', 'update']),
+            new Middleware('permission:delete-users', only: ['destroy']),
+        ];
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -51,7 +63,7 @@ class RoleController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(StoreRoleRequest $request)
-    {       
+    {
         $role = Role::create(['name' => $request->name]);
         $role->syncPermissions($request->permissions);
 

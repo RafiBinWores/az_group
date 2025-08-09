@@ -14,11 +14,23 @@ use App\Notifications\ProductionCreatedNotification;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
-class ProductionController extends Controller
+class ProductionController extends Controller implements HasMiddleware
 {
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:view-production-report',   only: ['index', 'show']),
+            new Middleware('permission:create-production-report', only: ['create', 'store']),
+            new Middleware('permission:edit-production-report',   only: ['edit', 'update']),
+            new Middleware('permission:delete-production-report', only: ['destroy']),
+        ];
+    }
+
     /**
      * Display a listing of the resource.
      */

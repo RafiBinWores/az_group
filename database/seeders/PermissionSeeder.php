@@ -42,6 +42,14 @@ class PermissionSeeder extends Seeder
             'create-washes',
             'edit-washes',
             'delete-washes',
+            'view-factories',
+            'create-factories',
+            'edit-factories',
+            'delete-factories',
+            'view-lines',
+            'create-lines',
+            'edit-lines',
+            'delete-lines',
             'view-production-report',
             'create-production-report',
             'edit-production-report',
@@ -50,6 +58,10 @@ class PermissionSeeder extends Seeder
             'create-finishing-report',
             'edit-finishing-report',
             'delete-finishing-report',
+            'view-garments',
+            'create-garments',
+            'edit-garments',
+            'delete-garments',
         ];
 
         foreach ($permissions as $permission) {

@@ -19,12 +19,18 @@
                 class="mdi mdi-file-excel-outline text-success"></i></a>
     </div>
     {{-- universal --}}
-    <a href="{{ route('orders.show', $order->id) }}" class="waves-effect waves-light"><i
-            class="mdi mdi-eye-outline text-warning"></i></a>
-    <a href="{{ route('orders.edit', $order->id) }}" class="waves-effect waves-light"><i
-            class="mdi mdi-pencil text-success"></i></a>
-    <p type="button" class="delete-btn mb-0" data-url="{{ route('orders.destroy', $order->id) }}">
-        <i class="mdi mdi-trash-can-outline text-danger"></i>
-    </p>
+    @can('view-orders')
+        <a href="{{ route('orders.show', $order->id) }}" class="waves-effect waves-light"><i
+                class="mdi mdi-eye-outline text-warning"></i></a>
+    @endcan
+    @can('edit-orders')
+        <a href="{{ route('orders.edit', $order->id) }}" class="waves-effect waves-light"><i
+                class="mdi mdi-pencil text-success"></i></a>
+    @endcan
+    @can('delete-orders')
+        <p type="button" class="delete-btn mb-0" data-url="{{ route('orders.destroy', $order->id) }}">
+            <i class="mdi mdi-trash-can-outline text-danger"></i>
+        </p>
+    @endcan
 
 </div>

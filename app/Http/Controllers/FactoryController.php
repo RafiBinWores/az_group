@@ -6,10 +6,23 @@ use App\Http\Requests\Factory\FactoryStoreRequest;
 use App\Http\Requests\Factory\FactoryUpdateRequest;
 use App\Models\Factory;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Yajra\DataTables\Facades\DataTables;
 
-class FactoryController extends Controller
+class FactoryController extends Controller implements HasMiddleware
 {
+        public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:view-factories',   only: ['index', 'show']),
+            new Middleware('permission:create-factories', only: ['create', 'store']),
+            new Middleware('permission:edit-factories',   only: ['edit', 'update']),
+            new Middleware('permission:delete-factories', only: ['destroy']),
+        ];
+    }
+
+    
      /**
      * Display a listing of the resource.
      */

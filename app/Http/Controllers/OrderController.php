@@ -9,12 +9,25 @@ use App\Models\GarmentType;
 use App\Models\Order;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
-class OrderController extends Controller
+class OrderController extends Controller implements HasMiddleware
 {
+        public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:view-orders',   only: ['index', 'show']),
+            new Middleware('permission:create-orders', only: ['create', 'store']),
+            new Middleware('permission:edit-orders',   only: ['edit', 'update']),
+            new Middleware('permission:delete-orders', only: ['destroy']),
+        ];
+    }
+
+
     /**
      * Display a listing of the resource.
      */

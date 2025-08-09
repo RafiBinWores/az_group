@@ -6,13 +6,28 @@ use App\Http\Requests\User\StoreUserRequest;
 use App\Http\Requests\User\UpdateUserRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Spatie\Permission\Middleware\PermissionMiddleware;
 use Spatie\Permission\Models\Role;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Routing\Controllers\HasMiddleware;
 
-class UserController extends Controller
+
+class UserController extends Controller implements HasMiddleware
 {
+    
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:view-users',   only: ['index', 'show']),
+            new Middleware('permission:create-users', only: ['create', 'store']),
+            new Middleware('permission:edit-users',   only: ['edit', 'update']),
+            new Middleware('permission:delete-users', only: ['destroy']),
+        ];
+    }
+
     /**
      * Display a listing of the resource.
      */

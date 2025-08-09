@@ -12,11 +12,24 @@ use App\Notifications\EmbroideryCreatedNotification;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
-class EmbroideryController extends Controller
+class EmbroideryController extends Controller implements HasMiddleware
 {
+        public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:view-embroideries',   only: ['index', 'show']),
+            new Middleware('permission:create-embroideries', only: ['create', 'store']),
+            new Middleware('permission:edit-embroideries',   only: ['edit', 'update']),
+            new Middleware('permission:delete-embroideries', only: ['destroy']),
+        ];
+    }
+
+
     /**
      * Display a listing of the resource.
      */

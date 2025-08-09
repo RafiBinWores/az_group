@@ -11,11 +11,24 @@ use App\Notifications\CuttingCreatedNotification;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
-class CuttingController extends Controller
+class CuttingController extends Controller implements HasMiddleware
 {
+        public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:view-cutting',   only: ['index', 'show']),
+            new Middleware('permission:create-cutting', only: ['create', 'store']),
+            new Middleware('permission:edit-cutting',   only: ['edit', 'update']),
+            new Middleware('permission:delete-cutting', only: ['destroy']),
+        ];
+    }
+
+
     /**
      * Display a listing of the resource.
      */

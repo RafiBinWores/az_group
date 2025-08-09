@@ -19,12 +19,18 @@
                 class="mdi mdi-file-excel-outline text-success"></i></a>
     </div>
     {{-- universal --}}
-    <a href="{{ route('washes.show', $wash->id) }}" class="waves-effect waves-light"><i
+    @can('view-washes')
+        <a href="{{ route('washes.show', $wash->id) }}" class="waves-effect waves-light"><i
             class="mdi mdi-eye-outline text-warning"></i></a>
-    <a href="{{ route('washes.edit', $wash->id) }}" class="waves-effect waves-light"><i
+    @endcan
+    @can('edit-washes')
+        <a href="{{ route('washes.edit', $wash->id) }}" class="waves-effect waves-light"><i
             class="mdi mdi-pencil text-success"></i></a>
-    <p type="button" class="delete-btn mb-0" data-url="{{ route('washes.destroy', $wash->id) }}">
+    @endcan
+    @can('delete-washes')
+        <p type="button" class="delete-btn mb-0" data-url="{{ route('washes.destroy', $wash->id) }}">
         <i class="mdi mdi-trash-can-outline text-danger"></i>
     </p>
+    @endcan
 
 </div>

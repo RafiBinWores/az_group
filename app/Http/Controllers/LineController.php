@@ -6,11 +6,24 @@ use App\Http\Requests\Line\LineStoreRequest;
 use App\Http\Requests\Line\LineUpdateRequest;
 use App\Models\Line;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Yajra\DataTables\Facades\DataTables;
 
-class LineController extends Controller
+class LineController extends Controller implements HasMiddleware
 {
-         /**
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:view-lines',   only: ['index', 'show']),
+            new Middleware('permission:create-lines', only: ['create', 'store']),
+            new Middleware('permission:edit-lines',   only: ['edit', 'update']),
+            new Middleware('permission:delete-lines', only: ['destroy']),
+        ];
+    }
+
+
+    /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
@@ -93,7 +106,7 @@ class LineController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(LineUpdateRequest $request,Line $line)
+    public function update(LineUpdateRequest $request, Line $line)
     {
         $typeChanged = $line->name !== $request->name;
         $statusChanged = $line->status !== (int)$request->lineStatus;

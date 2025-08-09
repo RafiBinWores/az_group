@@ -13,11 +13,23 @@ use App\Notifications\WashCreatedNotification;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
-class WashController extends Controller
+class WashController extends Controller implements HasMiddleware
 {
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:view-washes',   only: ['index', 'show']),
+            new Middleware('permission:create-washes', only: ['create', 'store']),
+            new Middleware('permission:edit-washes',   only: ['edit', 'update']),
+            new Middleware('permission:delete-washes', only: ['destroy']),
+        ];
+    }
+
     /**
      * Display a listing of the resource.
      */

@@ -5,12 +5,12 @@
         <li class="d-none d-lg-block">
             <form class="app-search">
                 <div class="app-search-box">
-                    <div class="input-group">
+                    {{-- <div class="input-group">
                         <input type="text" class="form-control" placeholder="Search..." id="top-search">
                         <button class="btn input-group-text" type="submit">
                             <i class="fe-search"></i>
                         </button>
-                    </div>
+                    </div> --}}
                     <div class="dropdown-menu dropdown-lg" id="search-dropdown">
                         <!-- item-->
                         <div class="dropdown-header noti-title">
@@ -73,7 +73,7 @@
             </form>
         </li>
 
-        <li class="dropdown d-inline-block d-lg-none">
+        {{-- <li class="dropdown d-inline-block d-lg-none">
             <a class="nav-link dropdown-toggle arrow-none waves-effect waves-light" data-bs-toggle="dropdown"
                 href="#" role="button" aria-haspopup="false" aria-expanded="false">
                 <i class="fe-search noti-icon"></i>
@@ -84,7 +84,7 @@
                         aria-label="Recipient's username">
                 </form>
             </div>
-        </li>
+        </li> --}}
 
         <li class="dropdown notification-list topbar-dropdown">
             <a class="nav-link dropdown-toggle waves-effect waves-light" data-bs-toggle="dropdown" href="#"

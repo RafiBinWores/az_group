@@ -6,11 +6,24 @@ use App\Http\Requests\GarmentType\GarmentTypeStoreRequest;
 use App\Http\Requests\GarmentType\GarmentTypeUpdateRequest;
 use App\Models\GarmentType;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
 
-class GarmentTypeController extends Controller
+class GarmentTypeController extends Controller implements HasMiddleware
 {
+        public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:view-garments',   only: ['index', 'show']),
+            new Middleware('permission:create-garments', only: ['create', 'store']),
+            new Middleware('permission:edit-garments',   only: ['edit', 'update']),
+            new Middleware('permission:delete-garments', only: ['destroy']),
+        ];
+    }
+
+
     /**
      * Display a listing of the resource.
      */
