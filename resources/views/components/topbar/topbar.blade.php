@@ -175,10 +175,10 @@
                 </a>
 
                 <!-- item-->
-                <a href="auth-lock-screen.html" class="dropdown-item notify-item">
+                {{-- <a href="auth-lock-screen.html" class="dropdown-item notify-item">
                     <i class="fe-lock"></i>
                     <span>Lock Screen</span>
-                </a>
+                </a> --}}
 
                 <div class="dropdown-divider"></div>
 

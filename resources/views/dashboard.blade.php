@@ -4,8 +4,22 @@
 
     <div class="container-fluid">
 
-        <div class="row">
+        @php
+        $dirStyles = function (string $direction) {
+        return $direction === 'up'
+        ? ['text' => 'text-success', 'bg' => 'bg-success-subtle', 'icon' => 'mdi mdi-arrow-up-bold']
+        : ['text' => 'text-danger', 'bg' => 'bg-danger-subtle', 'icon' => 'mdi mdi-arrow-down-bold'];
+        };
 
+        $formatDate = function ($d) {
+        return $d ? \Illuminate\Support\Carbon::parse($d)->format('M d, Y') : '—';
+        };
+        @endphp
+
+
+        <div class="row g-3">
+            {{-- Cutting --}}
+            @can('view-cutting')
             <div class="col-xl-3 col-md-6">
                 <div class="card">
                     <div class="card-body">
@@ -13,42 +27,152 @@
                         <div class="widget-box-2">
                             <div class="widget-detail-2 text-end">
                                 <span
-                                    class="badge rounded-pill float-start mt-3
-                                    {{ $cuttingDirection == 'up' ? 'bg-success' : 'bg-danger' }}">
+                                    class="badge rounded-pill float-start mt-3 {{ $cuttingDirection == 'up' ? 'bg-success' : 'bg-danger' }}">
                                     {{ abs($cuttingChange) }}%
                                     <i class="mdi mdi-trending-{{ $cuttingDirection }}"></i>
                                 </span>
-                                <h2 class="fw-normal mb-1">{{ $totalLatest }}</h2>
-                                <p class="text-muted">Latest  Cutting (<small>{{ $latestReportDay }}</small>)</p>
+                                <h2 class="fw-normal mb-1">{{ number_format($cuttingTotalLatest) }}</h2>
+                                <p class="text-muted">
+                                    Latest: {{ $formatDate($cuttingLatestDay) }}
+                                    <br>Prev: {{ $formatDate($cuttingPrevDay) }}
+                                </p>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+            @endcan
 
+            {{-- Embroidery --}}
+            @can('view-embroideries')
             <div class="col-xl-3 col-md-6">
                 <div class="card">
                     <div class="card-body">
-
-                        <h4 class="header-title mt-0 mb-3">Daily Sales</h4>
-
+                        <h4 class="header-title mt-0 mb-3">Embroidery Analytics</h4>
                         <div class="widget-box-2">
                             <div class="widget-detail-2 text-end">
-                                <span class="badge bg-pink rounded-pill float-start mt-3">32% <i
-                                        class="mdi mdi-trending-up"></i> </span>
-                                <h2 class="fw-normal mb-1"> 158 </h2>
-                                <p class="text-muted">Revenue today</p>
+                                <span
+                                    class="badge rounded-pill float-start mt-3 {{ $embDirection == 'up' ? 'bg-success' : 'bg-danger' }}">
+                                    {{ abs($embChange) }}%
+                                    <i class="mdi mdi-trending-{{ $embDirection }}"></i>
+                                </span>
+                                <h2 class="fw-normal mb-1">{{ number_format($embTotalLatest) }}</h2>
+                                <p class="text-muted">
+                                    Latest: {{ $formatDate($embLatestDay) }}
+                                    <br>Prev: {{ $formatDate($embPrevDay) }}
+                                </p>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
+            @endcan
 
-            </div><!-- end col -->
+            {{-- Print --}}
+            @can('view-prints')
+            <div class="col-xl-3 col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="header-title mt-0 mb-3">Print Analytics</h4>
+                        <div class="widget-box-2">
+                            <div class="widget-detail-2 text-end">
+                                <span
+                                    class="badge rounded-pill float-start mt-3 {{ $printDirection == 'up' ? 'bg-success' : 'bg-danger' }}">
+                                    {{ abs($printChange) }}%
+                                    <i class="mdi mdi-trending-{{ $printDirection }}"></i>
+                                </span>
+                                <h2 class="fw-normal mb-1">{{ number_format($printTotalLatest) }}</h2>
+                                <p class="text-muted">
+                                    Latest: {{ $formatDate($printLatestDay) }}
+                                    <br>Prev: {{ $formatDate($printPrevDay) }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endcan
+
+            {{-- Wash --}}
+            @can('view-washes')
+            <div class="col-xl-3 col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="header-title mt-0 mb-3">Wash Analytics</h4>
+                        <div class="widget-box-2">
+                            <div class="widget-detail-2 text-end">
+                                <span
+                                    class="badge rounded-pill float-start mt-3 {{ $washDirection == 'up' ? 'bg-success' : 'bg-danger' }}">
+                                    {{ abs($washChange) }}%
+                                    <i class="mdi mdi-trending-{{ $washDirection }}"></i>
+                                </span>
+                                <h2 class="fw-normal mb-1">{{ number_format($washTotalLatest) }}</h2>
+                                <p class="text-muted">
+                                    Latest: {{ $formatDate($washLatestDay) }}
+                                    <br>Prev: {{ $formatDate($washPrevDay) }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endcan
+
+            {{-- Production --}}
+            @can('view-production-report')
+            <div class="col-xl-3 col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="header-title mt-0 mb-3">Production Analytics</h4>
+                        <div class="widget-box-2">
+                            <div class="widget-detail-2 text-end">
+                                <span
+                                    class="badge rounded-pill float-start mt-3 {{ $prodDirection == 'up' ? 'bg-success' : 'bg-danger' }}">
+                                    {{ abs($prodChange) }}%
+                                    <i class="mdi mdi-trending-{{ $prodDirection }}"></i>
+                                </span>
+                                <h2 class="fw-normal mb-1">{{ number_format($prodTotalLatest) }}</h2>
+                                <p class="text-muted">
+                                    Latest: {{ $formatDate($prodLatestDay) }}
+                                    <br>Prev: {{ $formatDate($prodPrevDay) }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endcan
+
+            {{-- Finishing --}}
+            @can('view-finishing-report')
+            <div class="col-xl-3 col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="header-title mt-0 mb-3">Finishing Analytics</h4>
+                        <div class="widget-box-2">
+                            <div class="widget-detail-2 text-end">
+                                <span
+                                    class="badge rounded-pill float-start mt-3 {{ $finDirection == 'up' ? 'bg-success' : 'bg-danger' }}">
+                                    {{ abs($finChange) }}%
+                                    <i class="mdi mdi-trending-{{ $finDirection }}"></i>
+                                </span>
+                                <h2 class="fw-normal mb-1">{{ number_format($finTotalLatest) }}</h2>
+                                <p class="text-muted">
+                                    Latest: {{ $formatDate($finLatestDay) }}<br>
+                                    Prev: {{ $formatDate($finPrevDay) }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endcan
 
         </div>
-        <!-- end row -->
 
-        <div class="row">
+
+
+        {{-- <div class="row">
             <div class="col-xl-4">
                 <div class="card">
                     <div class="card-body">
@@ -97,17 +221,18 @@
                             </a>
                             <div class="dropdown-menu dropdown-menu-end">
                                 <!-- item-->
-                                <a href="javascript:void(0);" class="dropdown-item">Action</a>
+                                <a href="javascript:void(0);" class="dropdown-item">Week</a>
                                 <!-- item-->
-                                <a href="javascript:void(0);" class="dropdown-item">Another action</a>
+                                <a href="javascript:void(0);" class="dropdown-item">Month</a>
                                 <!-- item-->
-                                <a href="javascript:void(0);" class="dropdown-item">Something else</a>
+                                <a href="javascript:void(0);" class="dropdown-item">Year</a>
                                 <!-- item-->
-                                <a href="javascript:void(0);" class="dropdown-item">Separated link</a>
+
                             </div>
                         </div>
                         <h4 class="header-title mt-0">Statistics</h4>
-                        <div id="morris-bar-example" dir="ltr" style="height: 280px;" class="morris-chart"></div>
+                        <div id="morris-bar-example" dir="ltr" style="height: 280px;" class="morris-chart">
+                        </div>
                     </div>
                 </div>
             </div><!-- end col -->
@@ -137,7 +262,7 @@
                     </div>
                 </div>
             </div><!-- end col -->
-        </div>
+        </div> --}}
         <!-- end row -->
 
 
@@ -145,76 +270,35 @@
             <div class="col-xl-4">
                 <div class="card">
                     <div class="card-body">
-                        <div class="dropdown float-end">
-                            <a href="#" class="dropdown-toggle arrow-none card-drop" data-bs-toggle="dropdown"
-                                aria-expanded="false">
-                                <i class="mdi mdi-dots-vertical"></i>
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-end">
-                                <!-- item-->
-                                <a href="javascript:void(0);" class="dropdown-item">Action</a>
-                                <!-- item-->
-                                <a href="javascript:void(0);" class="dropdown-item">Another action</a>
-                                <!-- item-->
-                                <a href="javascript:void(0);" class="dropdown-item">Something else</a>
-                                <!-- item-->
-                                <a href="javascript:void(0);" class="dropdown-item">Separated link</a>
-                            </div>
-                        </div>
 
-                        <h4 class="header-title mb-3">Inbox</h4>
+                        <h4 class="header-title mb-3">Latest user</h4>
 
                         <div class="inbox-widget">
 
+                            @foreach($users as $user)
                             <div class="inbox-item">
-                                <a href="#">
-                                    <div class="inbox-item-img"><img src="assets/images/users/user-1.jpg"
-                                            class="rounded-circle" alt=""></div>
-                                    <h5 class="inbox-item-author mt-0 mb-1">Chadengle</h5>
-                                    <p class="inbox-item-text">Hey! there I'm available...</p>
-                                    <p class="inbox-item-date">13:40 PM</p>
-                                </a>
-                            </div>
+                                <div>
+                                    @if ($user->avatar)
+                                    <div class="inbox-item-img">
+                                        <img src="{{ asset('storage/' . $user->avatar) }}" class="rounded-circle"
+                                            alt="{{ $user->name }}">
+                                    </div>
+                                    @else
+                                    <div class="inbox-item-img">
+                                        <span class="badge bg-secondary rounded-circle"
+                                            style="width:40px; height:40px; display:inline-flex; align-items:center; justify-content:center;">
+                                            {{ strtoupper(substr($user->name, 0, 1)) }}
+                                        </span>
+                                    </div>
+                                    @endif
 
-                            <div class="inbox-item">
-                                <a href="#">
-                                    <div class="inbox-item-img"><img src="assets/images/users/user-2.jpg"
-                                            class="rounded-circle" alt=""></div>
-                                    <h5 class="inbox-item-author mt-0 mb-1">Tomaslau</h5>
-                                    <p class="inbox-item-text">I've finished it! See you so...</p>
-                                    <p class="inbox-item-date">13:34 PM</p>
-                                </a>
+                                    <h5 class="inbox-item-author mt-0 mb-1">{{ $user->name }}</h5>
+                                    <p class="inbox-item-text text-muted">{{ $user->email }}</p>
+                                    <p class="inbox-item-date">{{ $user->created_at->format('M d, Y') }}</p>
+                                </div>
                             </div>
+                            @endforeach
 
-                            <div class="inbox-item">
-                                <a href="#">
-                                    <div class="inbox-item-img"><img src="assets/images/users/user-3.jpg"
-                                            class="rounded-circle" alt=""></div>
-                                    <h5 class="inbox-item-author mt-0 mb-1">Stillnotdavid</h5>
-                                    <p class="inbox-item-text">This theme is awesome!</p>
-                                    <p class="inbox-item-date">13:17 PM</p>
-                                </a>
-                            </div>
-
-                            <div class="inbox-item">
-                                <a href="#">
-                                    <div class="inbox-item-img"><img src="assets/images/users/user-4.jpg"
-                                            class="rounded-circle" alt=""></div>
-                                    <h5 class="inbox-item-author mt-0 mb-1">Kurafire</h5>
-                                    <p class="inbox-item-text">Nice to meet you</p>
-                                    <p class="inbox-item-date">12:20 PM</p>
-                                </a>
-                            </div>
-
-                            <div class="inbox-item">
-                                <a href="#">
-                                    <div class="inbox-item-img"><img src="assets/images/users/user-5.jpg"
-                                            class="rounded-circle" alt=""></div>
-                                    <h5 class="inbox-item-author mt-0 mb-1">Shahedk</h5>
-                                    <p class="inbox-item-text">Hey! there I'm available...</p>
-                                    <p class="inbox-item-date">10:15 AM</p>
-                                </a>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -224,88 +308,48 @@
             <div class="col-xl-8">
                 <div class="card">
                     <div class="card-body">
-                        <div class="dropdown float-end">
-                            <a href="#" class="dropdown-toggle arrow-none card-drop" data-bs-toggle="dropdown"
-                                aria-expanded="false">
-                                <i class="mdi mdi-dots-vertical"></i>
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-end">
-                                <!-- item-->
-                                <a href="javascript:void(0);" class="dropdown-item">Action</a>
-                                <!-- item-->
-                                <a href="javascript:void(0);" class="dropdown-item">Another action</a>
-                                <!-- item-->
-                                <a href="javascript:void(0);" class="dropdown-item">Something else</a>
-                                <!-- item-->
-                                <a href="javascript:void(0);" class="dropdown-item">Separated link</a>
-                            </div>
-                        </div>
-
-                        <h4 class="header-title mt-0 mb-3">Latest Projects</h4>
+                        <h4 class="header-title mt-0 mb-3">Latest orders</h4>
 
                         <div class="table-responsive">
                             <table class="table table-hover mb-0">
                                 <thead>
                                     <tr>
                                         <th>#</th>
-                                        <th>Project Name</th>
-                                        <th>Start Date</th>
-                                        <th>Due Date</th>
-                                        <th>Status</th>
-                                        <th>Assign</th>
+                                        <th>Buyer Name</th>
+                                        <th>Style No</th>
+                                        <th>Order Quantity</th>
+                                        <th>Garment Type</th>
+                                        <th>Date</th>
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    @forelse($orders as $order)
                                     <tr>
-                                        <td>1</td>
-                                        <td>Adminto Admin v1</td>
-                                        <td>01/01/2017</td>
-                                        <td>26/04/2017</td>
-                                        <td><span class="badge bg-danger">Released</span></td>
-                                        <td>Coderthemes</td>
-                                    </tr>
-                                    <tr>
-                                        <td>2</td>
-                                        <td>Adminto Frontend v1</td>
-                                        <td>01/01/2017</td>
-                                        <td>26/04/2017</td>
-                                        <td><span class="badge bg-success">Released</span></td>
-                                        <td>Adminto admin</td>
-                                    </tr>
-                                    <tr>
-                                        <td>3</td>
-                                        <td>Adminto Admin v1.1</td>
-                                        <td>01/05/2017</td>
-                                        <td>10/05/2017</td>
-                                        <td><span class="badge bg-pink">Pending</span></td>
-                                        <td>Coderthemes</td>
-                                    </tr>
-                                    <tr>
-                                        <td>4</td>
-                                        <td>Adminto Frontend v1.1</td>
-                                        <td>01/01/2017</td>
-                                        <td>31/05/2017</td>
-                                        <td><span class="badge bg-purple">Work in Progress</span>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $order->buyer_name ?? 'N/A' }}</td>
+                                        <td>
+                                            @can('view-orders')
+                                            @if(Route::has('orders.show'))
+                                            <a href="{{ route('orders.show', $order->id) }}"
+                                                class="text-decoration-none">
+                                                {{ $order->style_no ?? 'N/A' }}
+                                            </a>
+                                            @else
+                                            {{ $order->style_no ?? 'N/A' }}
+                                            @endif
+                                            @endcan
                                         </td>
-                                        <td>Adminto admin</td>
+                                        <td>{{ number_format((int)($order->order_qty ?? 0)) }}</td>
+                                        <td>
+                                            {{ optional($order->garmentTypes)->pluck('name')->join(', ') ?: 'N/A' }}
+                                        </td>
+                                        <td>{{ ($order->date ?? $order->created_at)?->format('M d, Y') ?? '—' }}</td>
                                     </tr>
+                                    @empty
                                     <tr>
-                                        <td>5</td>
-                                        <td>Adminto Admin v1.3</td>
-                                        <td>01/01/2017</td>
-                                        <td>31/05/2017</td>
-                                        <td><span class="badge bg-warning">Coming soon</span></td>
-                                        <td>Coderthemes</td>
+                                        <td colspan="6" class="text-center text-muted">No recent orders found.</td>
                                     </tr>
-
-                                    <tr>
-                                        <td>6</td>
-                                        <td>Adminto Admin v1.3</td>
-                                        <td>01/01/2017</td>
-                                        <td>31/05/2017</td>
-                                        <td><span class="badge bg-primary">Coming soon</span></td>
-                                        <td>Adminto admin</td>
-                                    </tr>
+                                    @endforelse
 
                                 </tbody>
                             </table>

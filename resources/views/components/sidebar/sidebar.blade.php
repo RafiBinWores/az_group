@@ -42,81 +42,105 @@
 
                 <li class="menu-title mt-2">Operations</li>
 
-                <li>
-                    <a href="{{ route('finishing.index') }}">
-                        <i class="mdi mdi-package-variant-closed"></i>
-                        <span> Finishing </span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('washes.index') }}">
-                        <i class="mdi mdi-washing-machine"></i>
-                        <span> Washes </span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('productions.index') }}">
-                        <i class="mdi mdi-chart-line"></i>
-                        <span> Productions </span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('prints.index') }}">
-                        <i class="mdi mdi-draw"></i>
-                        <span> Prints </span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('embroideries.index') }}">
-                        <i class="fi fi-tr-sewing-machine-alt"></i>
-                        <span> Embroideries </span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('cuttings.index') }}">
-                        <i class="mdi mdi-content-cut"></i>
-                        <span> Cuttings </span>
-                    </a>
-                </li>
+                @can('view-finishing-report')
+                    <li>
+                        <a href="{{ route('finishing.index') }}">
+                            <i class="mdi mdi-package-variant-closed"></i>
+                            <span> Finishing </span>
+                        </a>
+                    </li>
+                @endcan
+                @can('view-washes')
+                    <li>
+                        <a href="{{ route('washes.index') }}">
+                            <i class="mdi mdi-washing-machine"></i>
+                            <span> Washes </span>
+                        </a>
+                    </li>
+                @endcan
+                @can('view-production-report')
+                    <li>
+                        <a href="{{ route('productions.index') }}">
+                            <i class="mdi mdi-chart-line"></i>
+                            <span> Productions </span>
+                        </a>
+                    </li>
+                @endcan
+                @can('view-prints')
+                    <li>
+                        <a href="{{ route('prints.index') }}">
+                            <i class="mdi mdi-draw"></i>
+                            <span> Prints </span>
+                        </a>
+                    </li>
+                @endcan
+                @can('view-embroideries')
+                    <li>
+                        <a href="{{ route('embroideries.index') }}">
+                            <i class="fi fi-tr-sewing-machine-alt"></i>
+                            <span> Embroideries </span>
+                        </a>
+                    </li>
+                @endcan
+                @can('view-cutting')
+                    <li>
+                        <a href="{{ route('cuttings.index') }}">
+                            <i class="mdi mdi-content-cut"></i>
+                            <span> Cuttings </span>
+                        </a>
+                    </li>
+                @endcan
 
                 <li class="menu-title mt-2">Management</li>
 
-                <li>
-                    <a href="{{ route('orders.index') }}">
-                        <i class="mdi mdi-package-variant"></i>
-                        <span> Orders </span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('garment_types.index') }}">
-                        <i class="mdi mdi-tshirt-crew-outline"></i>
-                        <span> Garments </span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('factories.index') }}">
-                        <i class="fa-regular fa-industry-windows"></i>
-                        <span> Factories </span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('lines.index') }}">
-                        <i class="fa-regular fa-conveyor-belt-boxes"></i>
-                        <span> Lines </span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('users.index') }}">
-                        <i class="mdi mdi-account-multiple-plus-outline"></i>
-                        <span> Users </span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('roles.index') }}">
-                        <i class="mdi mdi-family-tree"></i>
-                        <span> Roles </span>
-                    </a>
-                </li>
+                @can('view-orders')
+                    <li>
+                        <a href="{{ route('orders.index') }}">
+                            <i class="mdi mdi-package-variant"></i>
+                            <span> Orders </span>
+                        </a>
+                    </li>
+                @endcan
+                @can('view-garments')
+                    <li>
+                        <a href="{{ route('garment_types.index') }}">
+                            <i class="mdi mdi-tshirt-crew-outline"></i>
+                            <span> Garments </span>
+                        </a>
+                    </li>
+                @endcan
+                @can('view-factories')
+                    <li>
+                        <a href="{{ route('factories.index') }}">
+                            <i class="fa-regular fa-industry-windows"></i>
+                            <span> Factories </span>
+                        </a>
+                    </li>
+                @endcan
+                @can('view-lines')
+                    <li>
+                        <a href="{{ route('lines.index') }}">
+                            <i class="fa-regular fa-conveyor-belt-boxes"></i>
+                            <span> Lines </span>
+                        </a>
+                    </li>
+                @endcan
+                @can('view-users')
+                    <li>
+                        <a href="{{ route('users.index') }}">
+                            <i class="mdi mdi-account-multiple-plus-outline"></i>
+                            <span> Users </span>
+                        </a>
+                    </li>
+                @endcan
+                @can('view-roles')
+                    <li>
+                        <a href="{{ route('roles.index') }}">
+                            <i class="mdi mdi-family-tree"></i>
+                            <span> Roles </span>
+                        </a>
+                    </li>
+                @endcan
 
                 {{-- <li>
                     <a href="#sidebarAuth" data-bs-toggle="collapse">

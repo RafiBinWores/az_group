@@ -13,11 +13,13 @@
         <div class="card-body">
             <div class="row justify-content-between">
                 <div class="col-md-4">
-                    <div class="mt-3 mt-md-0">
+                    @can('edit-garments')
+                        <div class="mt-3 mt-md-0">
                         <a href="{{ route('garment_types.create') }}"
                             class="btn btn-success waves-effect waves-light"><i class="mdi mdi-plus-circle me-1"></i>
                             Add</a>
                     </div>
+                    @endcan
                 </div><!-- end col-->
                 {{-- <div class="col-md-8">
                     <form class="d-flex flex-wrap align-items-center justify-content-sm-end">

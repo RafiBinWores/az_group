@@ -19,7 +19,7 @@ use Yajra\DataTables\Facades\DataTables;
 
 class EmbroideryController extends Controller implements HasMiddleware
 {
-        public static function middleware(): array
+    public static function middleware(): array
     {
         return [
             new Middleware('permission:view-embroideries',   only: ['index', 'show']),
@@ -28,7 +28,6 @@ class EmbroideryController extends Controller implements HasMiddleware
             new Middleware('permission:delete-embroideries', only: ['destroy']),
         ];
     }
-
 
     /**
      * Display a listing of the resource.

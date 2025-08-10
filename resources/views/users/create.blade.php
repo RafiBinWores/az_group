@@ -43,6 +43,9 @@
                             </button>
                         </div>
                     </div>
+                    <small class="form-text text-muted">
+                        Allowed formats: JPG, PNG, GIF, WEBP. Maximum file size: 2 MB.
+                    </small>
                     <div class="invalid-feedback"></div>
                 </div>
                 <!-- Name -->
@@ -80,7 +83,7 @@
                         id="togglePassword" style="z-index: 10; top: 32px;">
                         <i class="fa-regular fa-eye text-muted" id="togglePasswordIcon"></i>
                     </button>
-                    <div class="error"></div>
+                    <p class="invalid-feedback"></p>
                 </div>
 
                 <button class="btn btn-primary me-2" type="submit">Create <i

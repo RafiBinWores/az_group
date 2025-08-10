@@ -191,7 +191,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/finishing/{finishing}/edit', 'edit')->name('finishing.edit');
         Route::put('/finishing/{finishing}', 'update')->name('finishing.update');
         Route::delete('/finishing/{finishing}', 'destroy')->name('finishing.destroy');
-        Route::get('/finishing/{finishing}/export', 'export')->name('finishing.export');
+         Route::get('/finishing/{finishing}/export-excel', 'exportExcel')->name('finishing.exportExcel');
+        Route::get('/finishing/{finishing}/export-pdf', 'exportPdf')->name('finishing.exportPdf');
     });
 
     // Notification routes

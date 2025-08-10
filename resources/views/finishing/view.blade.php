@@ -1,6 +1,6 @@
 <x-layouts.app>
-    <x-slot name="title">Wash Reports</x-slot>
-    <x-slot name="pageTitle">Wash Reports</x-slot>
+    <x-slot name="title">Finishing</x-slot>
+    <x-slot name="pageTitle">Finishing</x-slot>
 
     @push('styles')
         <link href="{{ asset('assets/libs/datatables.net-bs5/css/dataTables.bootstrap5.min.css') }}" rel="stylesheet"
@@ -13,9 +13,9 @@
         <div class="card-body">
             <div class="row justify-content-between">
                 <div class="col-md-4">
-                    @can('edit-washes')
+                    @can('edit-finishing-report')
                         <div class="mt-3 mt-md-0">
-                        <a href="{{ route('washes.create') }}" class="btn btn-success waves-effect waves-light"><i
+                        <a href="{{ route('finishing.create') }}" class="btn btn-success waves-effect waves-light"><i
                                 class="mdi mdi-plus-circle me-1"></i> Add</a>
                     </div>
                     @endcan
@@ -45,19 +45,26 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <h4 class="mt-0 header-title mb-3">Wash List</h4>
+                    <h4 class="mt-0 header-title mb-3">Finishing List</h4>
 
                     <table id="table" class="table dt-responsive table-responsive align-middle">
                         <thead>
                             <tr>
-                                <th>SL</th>
+                                <th>ID</th>
+                                <th>Buyer Name</th>
                                 <th>Style No</th>
-                                <th>Buyer</th>
-                                <th>Garment Type</th>
-                                <th>Order Qty</th>
-                                <th>Production Qty</th>
-                                <th>Send Qty</th>
-                                <th>Received Qty</th>
+                                <th>Thread Cutting</th>
+                                <th>QC Check</th>
+                                <th>Button & Rivet Attach</th>
+                                <th>Iron</th>
+                                <th>Hangtag</th>
+                                <th>Poly</th>
+                                <th>Carton</th>
+                                <th>Today Finishing</th>
+                                <th>Total FInishing</th>
+                                <th>Plan To Complete</th>
+                                <th>DPI Inline</th>
+                                <th>FRI Final</th>
                                 <th>Date</th>
                                 <th>Actions</th>
                             </tr>
@@ -79,13 +86,12 @@
         <script src="{{ asset('assets/js/pages/datatables.init.js') }}"></script>
         <script>
             var table;
-
             $(function() {
                 table = $('#table').DataTable({
                     processing: true,
                     serverSide: true,
                     ajax: {
-                        url: "{{ route('washes.index') }}",
+                        url: "{{ route('finishing.index') }}",
                         data: function(d) {
                             d.range = $('#filter').val();
                         }
@@ -100,32 +106,60 @@
                             searchable: false
                         },
                         {
-                            data: 'order.style_no',
-                            name: 'order.style_no'
+                            data: 'buyer_name',
+                            name: 'buyer_name',
                         },
                         {
-                            data: 'order.buyer_name',
-                            name: 'order.buyer_name'
+                            data: 'style_no',
+                            name: 'style_no'
                         },
                         {
-                            data: 'garment_type',
-                            name: 'garment_type',
+                            data: 'thread_cutting',
+                            name: 'thread_cutting'
                         },
                         {
-                            data: 'total_order_qty',
-                            name: 'total_order_qty'
+                            data: 'qc_check',
+                            name: 'qc_check'
                         },
                         {
-                            data: 'total_output_qty',
-                            name: 'total_output_qty'
+                            data: 'button_rivet_attach',
+                            name: 'button_rivet_attach'
                         },
                         {
-                            data: 'total_send_qty',
-                            name: 'total_send_qty'
+                            data: 'iron',
+                            name: 'iron'
                         },
                         {
-                            data: 'total_receive_qty',
-                            name: 'total_receive_qty'
+                            data: 'hangtag',
+                            name: 'hangtag'
+                        },
+                        {
+                            data: 'poly',
+                            name: 'poly'
+                        },
+                        {
+                            data: 'carton',
+                            name: 'carton'
+                        },
+                        {
+                            data: 'today_finishing',
+                            name: 'today_finishing'
+                        },
+                        {
+                            data: 'total_finishing',
+                            name: 'total_finishing'
+                        },
+                        {
+                            data: 'plan_to_complete',
+                            name: 'plan_to_complete'
+                        },
+                        {
+                            data: 'dpi_inline',
+                            name: 'dpi_inline'
+                        },
+                        {
+                            data: 'fri_final',
+                            name: 'fri_final'
                         },
                         {
                             data: 'date',
@@ -137,12 +171,13 @@
                             orderable: false,
                             searchable: false
                         },
-                    ]
+                    ],
                 });
                 $('#filter').change(function() {
                     table.ajax.reload();
                 });
             });
+
 
             // Handle Delete Click
             $(document).on('click', '.delete-btn', function() {
