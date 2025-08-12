@@ -21,10 +21,10 @@
                     @endcan
                 </div><!-- end col-->
                 <div class="col-md-8">
-                    <form class="d-flex flex-wrap align-items-center justify-content-sm-end">
-                        <label for="filter" class="me-2">Sort By</label>
+                    <div class="d-flex flex-wrap align-items-center justify-content-sm-end">
+                        <label for="range" class="me-2">Sort By</label>
                         <div class="me-sm-2">
-                            <select class="form-select my-1 my-md-0" id="filter" name="range">
+                            <select class="form-select my-1 my-md-0" id="range" name="range">
                                 <option selected="">All</option>
                                 <option value="today">Today</option>
                                 <option value="this_week">This week</option>
@@ -35,7 +35,7 @@
                                 <option value="last_year">Last year</option>
                             </select>
                         </div>
-                    </form>
+                    </div>
                 </div>
             </div> <!-- end row -->
         </div>
@@ -80,80 +80,60 @@
         <!-- Datatables init -->
         <script src="{{ asset('assets/js/pages/datatables.init.js') }}"></script>
         <script>
-            var table;
-
-            $(function() {
-                table = $('#table').DataTable({
-                    processing: true,
-                    serverSide: true,
-                    ajax: {
-                        url: "{{ route('productions.index') }}",
-                        data: function(d) {
-                            d.range = $('#filter').val();
-                        }
+            const table = $('#table').DataTable({
+                ajax: {
+                    url: '{{ route('productions.index') }}',
+                    data: function(d) {
+                        d.range = $('#range').val(); // pass filter
+                    }
+                },
+                columns: [{
+                        data: null,
+                        render: (d, t, r, meta) => meta.row + 1,
+                        orderable: false,
+                        searchable: false
                     },
-                    order: [
-                        [0, 'desc']
-                    ],
-                    columns: [{
-                            data: 'DT_RowIndex',
-                            name: 'DT_RowIndex',
-                            orderable: false,
-                            searchable: false
-                        },
-                                                {
-                            data: 'order.buyer_name',
-                            name: 'order.buyer_name'
-                        },
-                        {
-                            data: 'order.style_no',
-                            name: 'order.style_no'
-                        },
-                        {
-                            data: 'garment_type',
-                            name: 'garment_type',
-                        },
-                        {
-                            data: 'total_order_qty',
-                            name: 'total_order_qty',
-                        },
-                        {
-                            data: 'total_cutting_qty',
-                            name: 'total_cutting_qty',
-                        },
-                        {
-                            data: 'input_qty',
-                            name: 'input_qty'
-                        },
-                        {
-                            data: 'total_input_qty',
-                            name: 'total_input_qty'
-                        },
-                        {
-                            data: 'output_qty',
-                            name: 'output_qty'
-                        },
-                        {
-                            data: 'total_output_qty',
-                            name: 'total_output_qty'
-                        },
-                        {
-                            data: 'date',
-                            name: 'date'
-                        },
-                        {
-                            data: 'actions',
-                            name: 'actions',
-                            orderable: false,
-                            searchable: false
-                        },
-                    ]
-                });
-                $('#filter').change(function() {
-                    table.ajax.reload();
-                });
+                    {
+                        data: 'style_no'
+                    },
+                    {
+                        data: 'buyer_name'
+                    },
+                    {
+                        data: 'garment_type'
+                    },
+                    {
+                        data: 'total_order_qty'
+                    },
+                    {
+                        data: 'total_cutting_qty'
+                    },
+                    {
+                        data: 'input_qty'
+                    },
+                    {
+                        data: 'total_input_qty'
+                    },
+                    {
+                        data: 'output_qty'
+                    },
+                    {
+                        data: 'total_output_qty'
+                    },
+                    {
+                        data: 'date'
+                    },
+                    {
+                        data: 'actions',
+                        orderable: false,
+                        searchable: false
+                    }
+                ]
             });
 
+            $('#range').on('change', () => table.ajax.reload());
+        </script>
+        <script>
             // Handle Delete Click
             $(document).on('click', '.delete-btn', function() {
                 let url = $(this).data('url');

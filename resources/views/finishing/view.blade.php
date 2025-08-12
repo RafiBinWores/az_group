@@ -22,9 +22,9 @@
                 </div><!-- end col-->
                 <div class="col-md-8">
                     <form class="d-flex flex-wrap align-items-center justify-content-sm-end">
-                        <label for="filter" class="me-2">Sort By</label>
+                        <label for="range" class="me-2">Sort By</label>
                         <div class="me-sm-2">
-                            <select class="form-select my-1 my-md-0" id="filter" name="range">
+                            <select class="form-select my-1 my-md-0" id="range" name="range">
                                 <option selected="">All</option>
                                 <option value="today">Today</option>
                                 <option value="this_week">This week</option>
@@ -85,100 +85,75 @@
         <!-- Datatables init -->
         <script src="{{ asset('assets/js/pages/datatables.init.js') }}"></script>
         <script>
-            var table;
-            $(function() {
-                table = $('#table').DataTable({
-                    processing: true,
-                    serverSide: true,
-                    ajax: {
-                        url: "{{ route('finishing.index') }}",
-                        data: function(d) {
-                            d.range = $('#filter').val();
-                        }
+            const table = $('#table').DataTable({
+                ajax: {
+                    url: '{{ route('finishing.index') }}',
+                    data: function(d) {
+                        d.range = $('#range').val(); // pass filter
+                    }
+                },
+                columns: [{
+                        data: null,
+                        render: (d, t, r, meta) => meta.row + 1,
+                        orderable: false,
+                        searchable: false
                     },
-                    order: [
-                        [0, 'desc']
-                    ],
-                    columns: [{
-                            data: 'DT_RowIndex',
-                            name: 'DT_RowIndex',
-                            orderable: false,
-                            searchable: false
-                        },
-                        {
-                            data: 'buyer_name',
-                            name: 'buyer_name',
-                        },
-                        {
-                            data: 'style_no',
-                            name: 'style_no'
-                        },
-                        {
-                            data: 'thread_cutting',
-                            name: 'thread_cutting'
-                        },
-                        {
-                            data: 'qc_check',
-                            name: 'qc_check'
-                        },
-                        {
-                            data: 'button_rivet_attach',
-                            name: 'button_rivet_attach'
-                        },
-                        {
-                            data: 'iron',
-                            name: 'iron'
-                        },
-                        {
-                            data: 'hangtag',
-                            name: 'hangtag'
-                        },
-                        {
-                            data: 'poly',
-                            name: 'poly'
-                        },
-                        {
-                            data: 'carton',
-                            name: 'carton'
-                        },
-                        {
-                            data: 'today_finishing',
-                            name: 'today_finishing'
-                        },
-                        {
-                            data: 'total_finishing',
-                            name: 'total_finishing'
-                        },
-                        {
-                            data: 'plan_to_complete',
-                            name: 'plan_to_complete'
-                        },
-                        {
-                            data: 'dpi_inline',
-                            name: 'dpi_inline'
-                        },
-                        {
-                            data: 'fri_final',
-                            name: 'fri_final'
-                        },
-                        {
-                            data: 'date',
-                            name: 'date'
-                        },
-                        {
-                            data: 'actions',
-                            name: 'actions',
-                            orderable: false,
-                            searchable: false
-                        },
-                    ],
-                });
-                $('#filter').change(function() {
-                    table.ajax.reload();
-                });
+                    {
+                        data: 'style_no'
+                    },
+                    {
+                        data: 'buyer_name'
+                    },
+                    {
+                        data: 'thread_cutting'
+                    },
+                    {
+                        data: 'qc_check'
+                    },
+                    {
+                        data: 'button_rivet_attach'
+                    },
+                    {
+                        data: 'iron'
+                    },
+                    {
+                        data: 'hangtag'
+                    },
+                    {
+                        data: 'poly'
+                    },
+                    {
+                        data: 'carton'
+                    },
+                    {
+                        data: 'today_finishing'
+                    },
+                    {
+                        data: 'total_finishing'
+                    },
+                    {
+                        data: 'plan_to_complete'
+                    },
+                    {
+                        data: 'dpi_inline'
+                    },
+                    {
+                        data: 'fri_final'
+                    },
+                    {
+                        data: 'date'
+                    },
+                    {
+                        data: 'actions',
+                        orderable: false,
+                        searchable: false
+                    }
+                ]
             });
 
-
+            $('#range').on('change', () => table.ajax.reload());
+        </script>
+        <script>
             // Handle Delete Click
             $(document).on('click', '.delete-btn', function() {
                 let url = $(this).data('url');

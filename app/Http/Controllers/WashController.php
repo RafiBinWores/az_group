@@ -33,74 +33,135 @@ class WashController extends Controller implements HasMiddleware
     /**
      * Display a listing of the resource.
      */
+    // public function index(Request $request)
+    // {
+    //     if ($request->ajax()) {
+    //         $washes = Wash::with('order')->latest();
+
+    //         if ($request->range) {
+    //             switch ($request->range) {
+    //                 case 'today':
+    //                     $washes->whereDate('date', today());
+    //                     break;
+    //                 case 'this_week':
+    //                     $washes->whereBetween('date', [now()->startOfWeek(), now()->endOfWeek()]);
+    //                     break;
+    //                 case 'this_month':
+    //                     $washes->whereMonth('date', now()->month)->whereYear('date', now()->year);
+    //                     break;
+    //                 case 'this_year':
+    //                     $washes->whereYear('date', now()->year);
+    //                     break;
+    //                 case 'last_week':
+    //                     $washes->whereBetween('date', [now()->subWeek()->startOfWeek(), now()->subWeek()->endOfWeek()]);
+    //                     break;
+    //                 case 'last_month':
+    //                     $washes->whereMonth('date', now()->subMonth()->month)->whereYear('date', now()->subMonth()->year);
+    //                     break;
+    //                 case 'last_year':
+    //                     $washes->whereYear('date', now()->subYear()->year);
+    //                     break;
+    //                 default:
+    //                     // No filtering
+    //             }
+    //         }
+
+    //         return DataTables::of($washes)
+    //             ->addIndexColumn()
+    //             ->editColumn('style_no', function ($row) {
+    //                 return $row->order->style_no ?? 'N/A';
+    //             })
+    //             ->editColumn('buyer_name', function ($row) {
+    //                 return $row->order->buyer_name ?? 'N/A';
+    //             })
+    //             ->editColumn('garment_type', function ($row) {
+    //                 return $row->garment_type ?? 'N/A';
+    //             })
+    //             ->addColumn('total_order_qty', function ($row) {
+    //                 $arr = is_array($row->wash_data) ? $row->wash_data : json_decode($row->wash_data, true);
+    //                 return collect($arr)->sum('order_qty') ?? 0;
+    //             })
+    //             ->addColumn('total_output_qty', function ($row) {
+    //                 $arr = is_array($row->wash_data) ? $row->wash_data : json_decode($row->wash_data, true);
+    //                 return collect($arr)->sum('output_qty') ?? 0;
+    //             })
+    //             ->addColumn('total_send_qty', function ($row) {
+    //                 $arr = is_array($row->wash_data) ? $row->wash_data : json_decode($row->wash_data, true);
+    //                 return collect($arr)->sum('send') ?? 0;
+    //             })
+    //             ->addColumn('total_receive_qty', function ($row) {
+    //                 $arr = is_array($row->wash_data) ? $row->wash_data : json_decode($row->wash_data, true);
+    //                 return collect($arr)->sum('received') ?? 0;
+    //             })
+    //             ->editColumn('date', function ($row) {
+    //                 return Carbon::parse($row->date)->format('M d, Y');
+    //             })
+    //             ->addColumn('actions', function ($wash) {
+    //                 return view('washes.partials.actions', compact('wash'))->render();
+    //             })
+    //             ->rawColumns(['actions'])
+    //             ->make(true);
+    //     }
+
+    //     return view('washes.view');
+    // }
+
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $washes = Wash::with('order')->latest();
+            $q = Wash::query()
+                ->with(['order:id,style_no,buyer_name'])
+                ->select(['id', 'order_id', 'garment_type', 'date', 'wash_data'])
+                ->latest('date');
 
-            if ($request->range) {
+            if ($request->filled('range')) {
                 switch ($request->range) {
                     case 'today':
-                        $washes->whereDate('date', today());
+                        $q->whereDate('date', today());
                         break;
                     case 'this_week':
-                        $washes->whereBetween('date', [now()->startOfWeek(), now()->endOfWeek()]);
+                        $q->whereBetween('date', [now()->startOfWeek(), now()->endOfWeek()]);
                         break;
                     case 'this_month':
-                        $washes->whereMonth('date', now()->month)->whereYear('date', now()->year);
+                        $q->whereMonth('date', now()->month)->whereYear('date', now()->year);
                         break;
                     case 'this_year':
-                        $washes->whereYear('date', now()->year);
+                        $q->whereYear('date', now()->year);
                         break;
                     case 'last_week':
-                        $washes->whereBetween('date', [now()->subWeek()->startOfWeek(), now()->subWeek()->endOfWeek()]);
+                        $q->whereBetween('date', [now()->subWeek()->startOfWeek(), now()->subWeek()->endOfWeek()]);
                         break;
                     case 'last_month':
-                        $washes->whereMonth('date', now()->subMonth()->month)->whereYear('date', now()->subMonth()->year);
+                        $q->whereMonth('date', now()->subMonth()->month)->whereYear('date', now()->subMonth()->year);
                         break;
                     case 'last_year':
-                        $washes->whereYear('date', now()->subYear()->year);
+                        $q->whereYear('date', now()->subYear()->year);
                         break;
-                    default:
-                        // No filtering
+                        // default: no filter
                 }
             }
 
-            return DataTables::of($washes)
-                ->addIndexColumn()
-                ->editColumn('style_no', function ($row) {
-                    return $row->order->style_no ?? 'N/A';
-                })
-                ->editColumn('buyer_name', function ($row) {
-                    return $row->order->buyer_name ?? 'N/A';
-                })
-                ->editColumn('garment_type', function ($row) {
-                    return $row->garment_type ?? 'N/A';
-                })
-                ->addColumn('total_order_qty', function ($row) {
-                    $arr = is_array($row->wash_data) ? $row->wash_data : json_decode($row->wash_data, true);
-                    return collect($arr)->sum('order_qty') ?? 0;
-                })
-                ->addColumn('total_output_qty', function ($row) {
-                    $arr = is_array($row->wash_data) ? $row->wash_data : json_decode($row->wash_data, true);
-                    return collect($arr)->sum('output_qty') ?? 0;
-                })
-                ->addColumn('total_send_qty', function ($row) {
-                    $arr = is_array($row->wash_data) ? $row->wash_data : json_decode($row->wash_data, true);
-                    return collect($arr)->sum('send') ?? 0;
-                })
-                ->addColumn('total_receive_qty', function ($row) {
-                    $arr = is_array($row->wash_data) ? $row->wash_data : json_decode($row->wash_data, true);
-                    return collect($arr)->sum('received') ?? 0;
-                })
-                ->editColumn('date', function ($row) {
-                    return Carbon::parse($row->date)->format('M d, Y');
-                })
-                ->addColumn('actions', function ($wash) {
-                    return view('washes.partials.actions', compact('wash'))->render();
-                })
-                ->rawColumns(['actions'])
-                ->make(true);
+            $rows = $q->get()->map(function ($row) {
+                $arr = is_array($row->wash_data)
+                    ? $row->wash_data
+                    : (json_decode($row->wash_data, true) ?: []);
+
+                $sum = fn(string $key) => collect($arr)->sum(fn($r) => (int)($r[$key] ?? 0));
+
+                return [
+                    'style_no'           => optional($row->order)->style_no ?? 'N/A',
+                    'buyer_name'         => optional($row->order)->buyer_name ?? 'N/A',
+                    'garment_type'       => $row->garment_type ?? 'N/A',
+                    'total_order_qty'    => $sum('order_qty'),
+                    'total_output_qty'   => $sum('output_qty'),
+                    'total_send_qty'     => $sum('send'),
+                    'total_receive_qty'  => $sum('received'),
+                    'date'               => $row->date ? Carbon::parse($row->date)->format('M d, Y') : '',
+                    'actions'            => view('washes.partials.actions', ['wash' => $row])->render(),
+                ];
+            });
+
+            return response()->json(['data' => $rows]);
         }
 
         return view('washes.view');

@@ -32,7 +32,7 @@
 
                     <div class="mb-3 col-12 col-md-6 col-lg-4">
                         <label for="thread_cutting" class="form-label">Thread Cutting</label>
-                        <input type="number" name="thread_cutting" id="thread_cutting" placeholder="Thread Cutting"
+                        <input type="number" name="thread_cutting" id="thread_cutting" placeholder="Thread Cutting" required
                             min="1" class="form-control">
                         <div class="invalid-feedback"></div>
                     </div>

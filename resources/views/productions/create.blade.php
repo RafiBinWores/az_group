@@ -128,7 +128,7 @@
                                         </div>
                                         <div class="col-6 col-md-3 col-lg-3">
                                             <span class="fw-semibold">Factory</span>
-                                             <select name="production_data[${idx}][factory]" id="factory" class="form-select" required>
+                                             <select name="production_data[${idx}][factory]" id="factory" class="form-select">
                                                 <option value="" disabled selected>Select...</option>
                                                 ${renderOptions(factories, 'name', 'name')}
                                             </select>
@@ -136,7 +136,7 @@
                                         </div>
                                         <div class="col-6 col-md-3 col-lg-3">
                                             <span class="fw-semibold">Line</span>
-                                            <select name="production_data[${idx}][line]" id="line" class="form-select" required>
+                                            <select name="production_data[${idx}][line]" id="line" class="form-select">
                                                 <option value="">Select...</option>
                                                 ${renderOptions(lines, 'name', 'name')}
                                             </select>

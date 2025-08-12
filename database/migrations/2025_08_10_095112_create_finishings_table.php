@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('order_id')->constrained()->onDelete('cascade');
             $table->integer('thread_cutting');
-            $table->integer('qc_check');
+            $table->integer('qc_check')->nullable();
             $table->integer('button_rivet_attach')->nullable();
             $table->integer('iron')->nullable();
             $table->integer('hangtag')->nullable();

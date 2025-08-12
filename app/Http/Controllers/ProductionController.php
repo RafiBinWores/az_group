@@ -34,86 +34,151 @@ class ProductionController extends Controller implements HasMiddleware
     /**
      * Display a listing of the resource.
      */
+    // public function index(Request $request)
+    // {
+    //     if ($request->ajax()) {
+    //         $productions = Production::with('order')->latest();
+
+    //         if ($request->range) {
+    //             switch ($request->range) {
+    //                 case 'today':
+    //                     $productions->whereDate('date', today());
+    //                     break;
+    //                 case 'this_week':
+    //                     $productions->whereBetween('date', [now()->startOfWeek(), now()->endOfWeek()]);
+    //                     break;
+    //                 case 'this_month':
+    //                     $productions->whereMonth('date', now()->month)->whereYear('date', now()->year);
+    //                     break;
+    //                 case 'this_year':
+    //                     $productions->whereYear('date', now()->year);
+    //                     break;
+    //                 case 'last_week':
+    //                     $productions->whereBetween('date', [now()->subWeek()->startOfWeek(), now()->subWeek()->endOfWeek()]);
+    //                     break;
+    //                 case 'last_month':
+    //                     $productions->whereMonth('date', now()->subMonth()->month)->whereYear('date', now()->subMonth()->year);
+    //                     break;
+    //                 case 'last_year':
+    //                     $productions->whereYear('date', now()->subYear()->year);
+    //                     break;
+    //                 default:
+    //                     // No filtering
+    //             }
+    //         }
+
+    //         return DataTables::of($productions)
+    //             ->addIndexColumn()
+    //             ->editColumn('style_no', function ($row) {
+    //                 return $row->order->style_no ?? 'N/A';
+    //             })
+    //             ->editColumn('buyer_name', function ($row) {
+    //                 return $row->order->buyer_name ?? 'N/A';
+    //             })
+    //             ->editColumn('garment_type', function ($row) {
+    //                 return $row->garment_type ?? 'N/A';
+    //             })
+    //             ->addColumn('total_cutting_qty', function ($row) {
+    //                 $arr = is_array($row->production_data) ? $row->production_data : json_decode($row->production_data, true);
+    //                 return collect($arr)->sum('cutting_qty') ?? 0;
+    //             })
+    //             ->addColumn('total_order_qty', function ($row) {
+    //                 $arr = is_array($row->production_data) ? $row->production_data : json_decode($row->production_data, true);
+    //                 return collect($arr)->sum('order_qty') ?? 0;
+    //             })
+    //             ->addColumn('input_qty', function ($row) {
+    //                 $arr = is_array($row->production_data) ? $row->production_data : json_decode($row->production_data, true);
+    //                 return collect($arr)->sum('input') ?? 0;
+    //             })
+    //             ->addColumn('total_input_qty', function ($row) {
+    //                 $arr = is_array($row->production_data) ? $row->production_data : json_decode($row->production_data, true);
+    //                 return collect($arr)->sum('total_input') ?? 0;
+    //             })
+    //             ->addColumn('output_qty', function ($row) {
+    //                 $arr = is_array($row->production_data) ? $row->production_data : json_decode($row->production_data, true);
+    //                 return collect($arr)->sum('output') ?? 0;
+    //             })
+    //             ->addColumn('total_output_qty', function ($row) {
+    //                 $arr = is_array($row->production_data) ? $row->production_data : json_decode($row->production_data, true);
+    //                 return collect($arr)->sum('total_output') ?? 0;
+    //             })
+    //             ->editColumn('date', function ($row) {
+    //                 return Carbon::parse($row->date)->format('M d, Y');
+    //             })
+    //             ->addColumn('actions', function ($production) {
+    //                 return view('productions.partials.actions', compact('production'))->render();
+    //             })
+    //             ->rawColumns(['actions'])
+    //             ->make(true);
+    //     }
+
+    //     return view('productions.view');
+    // }
+
+
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $productions = Production::with('order')->latest();
+            $q = Production::query()
+                ->with(['order:id,style_no,buyer_name'])
+                ->select(['id', 'order_id', 'garment_type', 'date', 'production_data'])
+                ->latest('date');
 
-            if ($request->range) {
+            if ($request->filled('range')) {
                 switch ($request->range) {
                     case 'today':
-                        $productions->whereDate('date', today());
+                        $q->whereDate('date', today());
                         break;
                     case 'this_week':
-                        $productions->whereBetween('date', [now()->startOfWeek(), now()->endOfWeek()]);
+                        $q->whereBetween('date', [now()->startOfWeek(), now()->endOfWeek()]);
                         break;
                     case 'this_month':
-                        $productions->whereMonth('date', now()->month)->whereYear('date', now()->year);
+                        $q->whereMonth('date', now()->month)->whereYear('date', now()->year);
                         break;
                     case 'this_year':
-                        $productions->whereYear('date', now()->year);
+                        $q->whereYear('date', now()->year);
                         break;
                     case 'last_week':
-                        $productions->whereBetween('date', [now()->subWeek()->startOfWeek(), now()->subWeek()->endOfWeek()]);
+                        $q->whereBetween('date', [now()->subWeek()->startOfWeek(), now()->subWeek()->endOfWeek()]);
                         break;
                     case 'last_month':
-                        $productions->whereMonth('date', now()->subMonth()->month)->whereYear('date', now()->subMonth()->year);
+                        $q->whereMonth('date', now()->subMonth()->month)->whereYear('date', now()->subMonth()->year);
                         break;
                     case 'last_year':
-                        $productions->whereYear('date', now()->subYear()->year);
+                        $q->whereYear('date', now()->subYear()->year);
                         break;
-                    default:
-                        // No filtering
+                        // default: no filter
                 }
             }
 
-            return DataTables::of($productions)
-                ->addIndexColumn()
-                ->editColumn('style_no', function ($row) {
-                    return $row->order->style_no ?? 'N/A';
-                })
-                ->editColumn('buyer_name', function ($row) {
-                    return $row->order->buyer_name ?? 'N/A';
-                })
-                ->editColumn('garment_type', function ($row) {
-                    return $row->garment_type ?? 'N/A';
-                })
-                ->addColumn('total_cutting_qty', function ($row) {
-                    $arr = is_array($row->production_data) ? $row->production_data : json_decode($row->production_data, true);
-                    return collect($arr)->sum('cutting_qty') ?? 0;
-                })
-                ->addColumn('total_order_qty', function ($row) {
-                    $arr = is_array($row->production_data) ? $row->production_data : json_decode($row->production_data, true);
-                    return collect($arr)->sum('order_qty') ?? 0;
-                })
-                ->addColumn('input_qty', function ($row) {
-                    $arr = is_array($row->production_data) ? $row->production_data : json_decode($row->production_data, true);
-                    return collect($arr)->sum('input') ?? 0;
-                })
-                ->addColumn('total_input_qty', function ($row) {
-                    $arr = is_array($row->production_data) ? $row->production_data : json_decode($row->production_data, true);
-                    return collect($arr)->sum('total_input') ?? 0;
-                })
-                ->addColumn('output_qty', function ($row) {
-                    $arr = is_array($row->production_data) ? $row->production_data : json_decode($row->production_data, true);
-                    return collect($arr)->sum('output') ?? 0;
-                })
-                ->addColumn('total_output_qty', function ($row) {
-                    $arr = is_array($row->production_data) ? $row->production_data : json_decode($row->production_data, true);
-                    return collect($arr)->sum('total_output') ?? 0;
-                })
-                ->editColumn('date', function ($row) {
-                    return Carbon::parse($row->date)->format('M d, Y');
-                })
-                ->addColumn('actions', function ($production) {
-                    return view('productions.partials.actions', compact('production'))->render();
-                })
-                ->rawColumns(['actions'])
-                ->make(true);
+            $rows = $q->get()->map(function ($row) {
+                $arr = is_array($row->production_data)
+                    ? $row->production_data
+                    : (json_decode($row->production_data, true) ?: []);
+
+                $sum = fn(string $key) => collect($arr)->sum(fn($r) => (int)($r[$key] ?? 0));
+
+                return [
+                    'style_no'          => optional($row->order)->style_no ?? 'N/A',
+                    'buyer_name'        => optional($row->order)->buyer_name ?? 'N/A',
+                    'garment_type'      => $row->garment_type ?? 'N/A',
+                    'total_order_qty'   => $sum('order_qty'),
+                    'total_cutting_qty' => $sum('cutting_qty'),
+                    'input_qty'         => $sum('input'),
+                    'total_input_qty'   => $sum('total_input'),
+                    'output_qty'        => $sum('output'),
+                    'total_output_qty'  => $sum('total_output'),
+                    'date'              => $row->date ? Carbon::parse($row->date)->format('M d, Y') : '',
+                    'actions'           => view('productions.partials.actions', ['production' => $row])->render(),
+                ];
+            });
+
+            return response()->json(['data' => $rows]);
         }
 
         return view('productions.view');
     }
+
 
     /**
      * Show the form for creating a new resource.

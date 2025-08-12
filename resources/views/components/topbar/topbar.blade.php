@@ -169,10 +169,10 @@
                 </div>
 
                 <!-- item-->
-                <a href="contacts-profile.html" class="dropdown-item notify-item">
+                {{-- <a href="contacts-profile.html" class="dropdown-item notify-item">
                     <i class="fe-user"></i>
                     <span>My Account</span>
-                </a>
+                </a> --}}
 
                 <!-- item-->
                 {{-- <a href="auth-lock-screen.html" class="dropdown-item notify-item">

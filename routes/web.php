@@ -115,7 +115,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/embroideries/{embroidery}/edit', 'edit')->name('embroideries.edit');
         Route::put('/embroideries/{embroidery}', 'update')->name('embroideries.update');
         Route::delete('/embroideries/{embroidery}', 'destroy')->name('embroideries.destroy');
-        Route::get('/embroideries/filter', 'filter')->name('embroideries.filter');
         Route::get('/embroideries/{embroidery}/export-excel', 'exportExcel')->name('embroideries.exportExcel');
         Route::get('/embroideries/{embroidery}/export-pdf', 'exportPdf')->name('embroideries.exportPdf');
     });
@@ -129,7 +128,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/prints/{print}/edit', 'edit')->name('prints.edit');
         Route::put('/prints/{print}', 'update')->name('prints.update');
         Route::delete('/prints/{print}', 'destroy')->name('prints.destroy');
-        Route::get('/prints/filter', 'filter')->name('prints.filter');
         Route::get('/prints/{print}/export-excel', 'exportExcel')->name('prints.exportExcel');
         Route::get('/prints/{print}/export-pdf', 'exportPdf')->name('prints.exportPdf');
     });

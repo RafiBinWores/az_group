@@ -21,32 +21,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 
-// Password show/hide toggle functionality
-document
-    .getElementById("togglePassword")
-    .addEventListener("click", function () {
-        const passwordInput = document.getElementById("password");
-        const icon = document.getElementById("togglePasswordIcon");
-        const isPassword = passwordInput.type === "password";
-        passwordInput.type = isPassword ? "text" : "password";
-        icon.className = isPassword
-            ? "fa-regular fa-eye-slash text-muted"
-            : "fa-regular fa-eye text-muted";
-    });
-
-document
-    .getElementById("togglePasswordConfirm")
-    .addEventListener("click", function () {
-        const passwordInput = document.getElementById("password_confirmation");
-        const icon = document.getElementById("togglePasswordConfirmIcon");
-        const isPassword = passwordInput.type === "password";
-        passwordInput.type = isPassword ? "text" : "password";
-        icon.className = isPassword
-            ? "fa-regular fa-eye-slash text-muted"
-            : "fa-regular fa-eye text-muted";
-    });
-
-// Show preview when user selects an image
 const avatarInput = document.getElementById("avatar-input");
 const avatarPreviewImg = document.getElementById("avatarPreviewImg");
 const avatarDefaultSvg = document.getElementById("avatarDefaultSvg");
@@ -79,3 +53,30 @@ if (deletePhotoBtn) {
         avatarDefaultSvg.style.display = "block";
     });
 }
+
+// Password show/hide toggle functionality
+document
+    .getElementById("togglePassword")
+    .addEventListener("click", function () {
+        const passwordInput = document.getElementById("password");
+        const icon = document.getElementById("togglePasswordIcon");
+        const isPassword = passwordInput.type === "password";
+        passwordInput.type = isPassword ? "text" : "password";
+        icon.className = isPassword
+            ? "fa-regular fa-eye-slash text-muted"
+            : "fa-regular fa-eye text-muted";
+    });
+
+document
+    .getElementById("togglePasswordConfirm")
+    .addEventListener("click", function () {
+        const passwordInput = document.getElementById("password_confirmation");
+        const icon = document.getElementById("togglePasswordConfirmIcon");
+        const isPassword = passwordInput.type === "password";
+        passwordInput.type = isPassword ? "text" : "password";
+        icon.className = isPassword
+            ? "fa-regular fa-eye-slash text-muted"
+            : "fa-regular fa-eye text-muted";
+    });
+
+// Show preview when user selects an image

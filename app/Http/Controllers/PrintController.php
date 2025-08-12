@@ -33,74 +33,134 @@ class PrintController extends Controller implements HasMiddleware
     /**
      * Display a listing of the resource.
      */
+    // public function index(Request $request)
+    // {
+    //     if ($request->ajax()) {
+    //         $printReports = PrintReport::with('order')->latest();
+
+    //         if ($request->range) {
+    //             switch ($request->range) {
+    //                 case 'today':
+    //                     $printReports->whereDate('date', today());
+    //                     break;
+    //                 case 'this_week':
+    //                     $printReports->whereBetween('date', [now()->startOfWeek(), now()->endOfWeek()]);
+    //                     break;
+    //                 case 'this_month':
+    //                     $printReports->whereMonth('date', now()->month)->whereYear('date', now()->year);
+    //                     break;
+    //                 case 'this_year':
+    //                     $printReports->whereYear('date', now()->year);
+    //                     break;
+    //                 case 'last_week':
+    //                     $printReports->whereBetween('date', [now()->subWeek()->startOfWeek(), now()->subWeek()->endOfWeek()]);
+    //                     break;
+    //                 case 'last_month':
+    //                     $printReports->whereMonth('date', now()->subMonth()->month)->whereYear('date', now()->subMonth()->year);
+    //                     break;
+    //                 case 'last_year':
+    //                     $printReports->whereYear('date', now()->subYear()->year);
+    //                     break;
+    //                 default:
+    //                     // No filtering
+    //             }
+    //         }
+
+    //         return DataTables::of($printReports)
+    //             ->addIndexColumn()
+    //             ->editColumn('style_no', function ($row) {
+    //                 return $row->order->style_no ?? 'N/A';
+    //             })
+    //             ->editColumn('buyer_name', function ($row) {
+    //                 return $row->order->buyer_name ?? 'N/A';
+    //             })
+    //             ->editColumn('garment_type', function ($row) {
+    //                 return $row->garment_type ?? 'N/A';
+    //             })
+    //             ->addColumn('total_order_qty', function ($row) {
+    //                 $arr = is_array($row->print_data) ? $row->print_data : json_decode($row->print_data, true);
+    //                 return collect($arr)->sum('order_qty') ?? 0;
+    //             })
+    //             ->addColumn('total_send_qty', function ($row) {
+    //                 $arr = is_array($row->print_data) ? $row->print_data : json_decode($row->print_data, true);
+    //                 return collect($arr)->sum('send') ?? 0;
+    //             })
+    //             ->addColumn('total_receive_qty', function ($row) {
+    //                 $arr = is_array($row->print_data) ? $row->print_data : json_decode($row->print_data, true);
+    //                 return collect($arr)->sum('received') ?? 0;
+    //             })
+    //             ->editColumn('date', function ($row) {
+    //                 return Carbon::parse($row->date)->format('M d, Y');
+    //             })
+    //             ->addColumn('actions', function ($printReport) {
+    //                 return view('print-reports.partials.actions', compact('printReport'))->render();
+    //             })
+    //             ->rawColumns(['actions'])
+    //             ->make(true);
+    //     }
+
+    //     return view('print-reports.view');
+    // }
+
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $printReports = PrintReport::with('order')->latest();
+            $q = PrintReport::with('order')->latest('date');
 
-            if ($request->range) {
+            if ($request->filled('range')) {
                 switch ($request->range) {
                     case 'today':
-                        $printReports->whereDate('date', today());
+                        $q->whereDate('date', today());
                         break;
                     case 'this_week':
-                        $printReports->whereBetween('date', [now()->startOfWeek(), now()->endOfWeek()]);
+                        $q->whereBetween('date', [now()->startOfWeek(), now()->endOfWeek()]);
                         break;
                     case 'this_month':
-                        $printReports->whereMonth('date', now()->month)->whereYear('date', now()->year);
+                        $q->whereMonth('date', now()->month)->whereYear('date', now()->year);
                         break;
                     case 'this_year':
-                        $printReports->whereYear('date', now()->year);
+                        $q->whereYear('date', now()->year);
                         break;
                     case 'last_week':
-                        $printReports->whereBetween('date', [now()->subWeek()->startOfWeek(), now()->subWeek()->endOfWeek()]);
+                        $q->whereBetween('date', [now()->subWeek()->startOfWeek(), now()->subWeek()->endOfWeek()]);
                         break;
                     case 'last_month':
-                        $printReports->whereMonth('date', now()->subMonth()->month)->whereYear('date', now()->subMonth()->year);
+                        $q->whereMonth('date', now()->subMonth()->month)->whereYear('date', now()->subMonth()->year);
                         break;
                     case 'last_year':
-                        $printReports->whereYear('date', now()->subYear()->year);
+                        $q->whereYear('date', now()->subYear()->year);
                         break;
-                    default:
-                        // No filtering
+                        // default: no filter
                 }
             }
 
-            return DataTables::of($printReports)
-                ->addIndexColumn()
-                ->editColumn('style_no', function ($row) {
-                    return $row->order->style_no ?? 'N/A';
-                })
-                ->editColumn('buyer_name', function ($row) {
-                    return $row->order->buyer_name ?? 'N/A';
-                })
-                ->editColumn('garment_type', function ($row) {
-                    return $row->garment_type ?? 'N/A';
-                })
-                ->addColumn('total_order_qty', function ($row) {
-                    $arr = is_array($row->print_data) ? $row->print_data : json_decode($row->print_data, true);
-                    return collect($arr)->sum('order_qty') ?? 0;
-                })
-                ->addColumn('total_send_qty', function ($row) {
-                    $arr = is_array($row->print_data) ? $row->print_data : json_decode($row->print_data, true);
-                    return collect($arr)->sum('send') ?? 0;
-                })
-                ->addColumn('total_receive_qty', function ($row) {
-                    $arr = is_array($row->print_data) ? $row->print_data : json_decode($row->print_data, true);
-                    return collect($arr)->sum('received') ?? 0;
-                })
-                ->editColumn('date', function ($row) {
-                    return Carbon::parse($row->date)->format('M d, Y');
-                })
-                ->addColumn('actions', function ($printReport) {
-                    return view('print-reports.partials.actions', compact('printReport'))->render();
-                })
-                ->rawColumns(['actions'])
-                ->make(true);
+            $rows = $q->get()->map(function ($row) {
+                $arr = is_array($row->print_data)
+                    ? $row->print_data
+                    : (json_decode($row->print_data, true) ?: []);
+
+                $totalOrder   = collect($arr)->sum(fn($r) => (int)($r['order_qty'] ?? 0));
+                $totalSend    = collect($arr)->sum(fn($r) => (int)($r['send'] ?? 0));
+                $totalReceive = collect($arr)->sum(fn($r) => (int)($r['received'] ?? 0));
+
+                return [
+                    'style_no'          => optional($row->order)->style_no ?? 'N/A',
+                    'buyer_name'        => optional($row->order)->buyer_name ?? 'N/A',
+                    'garment_type'      => $row->garment_type ?? 'N/A',
+                    'total_order_qty'   => $totalOrder,
+                    'total_send_qty'    => $totalSend,
+                    'total_receive_qty' => $totalReceive,
+                    'date'              => $row->date ? Carbon::parse($row->date)->format('M d, Y') : '',
+                    'actions'           => view('print-reports.partials.actions', ['printReport' => $row])->render(),
+                ];
+            });
+
+            return response()->json(['data' => $rows]);
         }
 
         return view('print-reports.view');
     }
+
 
     /**
      * Show the form for creating a new resource.

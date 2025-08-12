@@ -32,74 +32,136 @@ class EmbroideryController extends Controller implements HasMiddleware
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
-    {
-        if ($request->ajax()) {
-            $embroideries = Embroidery::with('order')->latest();
+    // public function index(Request $request)
+    // {
+    //     if ($request->ajax()) {
+    //         $embroideries = Embroidery::with('order')->latest();
 
-            if ($request->range) {
-                switch ($request->range) {
-                    case 'today':
-                        $embroideries->whereDate('date', today());
-                        break;
-                    case 'this_week':
-                        $embroideries->whereBetween('date', [now()->startOfWeek(), now()->endOfWeek()]);
-                        break;
-                    case 'this_month':
-                        $embroideries->whereMonth('date', now()->month)->whereYear('date', now()->year);
-                        break;
-                    case 'this_year':
-                        $embroideries->whereYear('date', now()->year);
-                        break;
-                    case 'last_week':
-                        $embroideries->whereBetween('date', [now()->subWeek()->startOfWeek(), now()->subWeek()->endOfWeek()]);
-                        break;
-                    case 'last_month':
-                        $embroideries->whereMonth('date', now()->subMonth()->month)->whereYear('date', now()->subMonth()->year);
-                        break;
-                    case 'last_year':
-                        $embroideries->whereYear('date', now()->subYear()->year);
-                        break;
-                    default:
-                        // No filtering
-                }
+    //         if ($request->range) {
+    //             switch ($request->range) {
+    //                 case 'today':
+    //                     $embroideries->whereDate('date', today());
+    //                     break;
+    //                 case 'this_week':
+    //                     $embroideries->whereBetween('date', [now()->startOfWeek(), now()->endOfWeek()]);
+    //                     break;
+    //                 case 'this_month':
+    //                     $embroideries->whereMonth('date', now()->month)->whereYear('date', now()->year);
+    //                     break;
+    //                 case 'this_year':
+    //                     $embroideries->whereYear('date', now()->year);
+    //                     break;
+    //                 case 'last_week':
+    //                     $embroideries->whereBetween('date', [now()->subWeek()->startOfWeek(), now()->subWeek()->endOfWeek()]);
+    //                     break;
+    //                 case 'last_month':
+    //                     $embroideries->whereMonth('date', now()->subMonth()->month)->whereYear('date', now()->subMonth()->year);
+    //                     break;
+    //                 case 'last_year':
+    //                     $embroideries->whereYear('date', now()->subYear()->year);
+    //                     break;
+    //                 default:
+    //                     // No filtering
+    //             }
+    //         }
+
+    //         return DataTables::of($embroideries)
+    //             ->addIndexColumn()
+    //             ->editColumn('style_no', function ($row) {
+    //                 return $row->order->style_no ?? 'N/A';
+    //             })
+    //             ->editColumn('buyer_name', function ($row) {
+    //                 return $row->order->buyer_name ?? 'N/A';
+    //             })
+    //             ->editColumn('garment_type', function ($row) {
+    //                 return $row->garment_type ?? 'N/A';
+    //             })
+    //             ->addColumn('total_order_qty', function ($row) {
+    //                 $arr = is_array($row->embroidery_data) ? $row->embroidery_data : json_decode($row->embroidery_data, true);
+    //                 return collect($arr)->sum('order_qty') ?? 0;
+    //             })
+    //             ->addColumn('total_send_qty', function ($row) {
+    //                 $arr = is_array($row->embroidery_data) ? $row->embroidery_data : json_decode($row->embroidery_data, true);
+    //                 return collect($arr)->sum('send') ?? 0;
+    //             })
+    //             ->addColumn('total_receive_qty', function ($row) {
+    //                 $arr = is_array($row->embroidery_data) ? $row->embroidery_data : json_decode($row->embroidery_data, true);
+    //                 return collect($arr)->sum('received') ?? 0;
+    //             })
+    //             ->editColumn('date', function ($row) {
+    //                 return Carbon::parse($row->date)->format('M d, Y');
+    //             })
+    //             ->addColumn('actions', function ($embroidery) {
+    //                 return view('embroideries.partials.actions', compact('embroidery'))->render();
+    //             })
+    //             ->rawColumns(['actions'])
+    //             ->make(true);
+    //     }
+
+    //     return view('embroideries.view');
+    // }
+
+public function index(Request $request)
+{
+    if ($request->ajax()) {
+        $q = Embroidery::with('order')->latest('date');
+
+        // Client-side filtering param (optional)
+        if ($request->filled('range')) {
+            switch ($request->range) {
+                case 'today':
+                    $q->whereDate('date', today());
+                    break;
+                case 'this_week':
+                    $q->whereBetween('date', [now()->startOfWeek(), now()->endOfWeek()]);
+                    break;
+                case 'this_month':
+                    $q->whereMonth('date', now()->month)->whereYear('date', now()->year);
+                    break;
+                case 'this_year':
+                    $q->whereYear('date', now()->year);
+                    break;
+                case 'last_week':
+                    $q->whereBetween('date', [now()->subWeek()->startOfWeek(), now()->subWeek()->endOfWeek()]);
+                    break;
+                case 'last_month':
+                    $q->whereMonth('date', now()->subMonth()->month)->whereYear('date', now()->subMonth()->year);
+                    break;
+                case 'last_year':
+                    $q->whereYear('date', now()->subYear()->year);
+                    break;
+                // default: no filtering
             }
-
-            return DataTables::of($embroideries)
-                ->addIndexColumn()
-                ->editColumn('style_no', function ($row) {
-                    return $row->order->style_no ?? 'N/A';
-                })
-                ->editColumn('buyer_name', function ($row) {
-                    return $row->order->buyer_name ?? 'N/A';
-                })
-                ->editColumn('garment_type', function ($row) {
-                    return $row->garment_type ?? 'N/A';
-                })
-                ->addColumn('total_order_qty', function ($row) {
-                    $arr = is_array($row->embroidery_data) ? $row->embroidery_data : json_decode($row->embroidery_data, true);
-                    return collect($arr)->sum('order_qty') ?? 0;
-                })
-                ->addColumn('total_send_qty', function ($row) {
-                    $arr = is_array($row->embroidery_data) ? $row->embroidery_data : json_decode($row->embroidery_data, true);
-                    return collect($arr)->sum('send') ?? 0;
-                })
-                ->addColumn('total_receive_qty', function ($row) {
-                    $arr = is_array($row->embroidery_data) ? $row->embroidery_data : json_decode($row->embroidery_data, true);
-                    return collect($arr)->sum('received') ?? 0;
-                })
-                ->editColumn('date', function ($row) {
-                    return Carbon::parse($row->date)->format('M d, Y');
-                })
-                ->addColumn('actions', function ($embroidery) {
-                    return view('embroideries.partials.actions', compact('embroidery'))->render();
-                })
-                ->rawColumns(['actions'])
-                ->make(true);
         }
 
-        return view('embroideries.view');
+        $rows = $q->get()->map(function ($row) {
+            $arr = is_array($row->embroidery_data)
+                ? $row->embroidery_data
+                : (json_decode($row->embroidery_data, true) ?: []);
+
+            $totalOrder   = collect($arr)->sum(fn ($r) => (int)($r['order_qty'] ?? 0));
+            $totalSend    = collect($arr)->sum(fn ($r) => (int)($r['send'] ?? 0));
+            $totalReceive = collect($arr)->sum(fn ($r) => (int)($r['received'] ?? 0));
+
+            return [
+                'style_no'           => optional($row->order)->style_no ?? 'N/A',
+                'buyer_name'         => optional($row->order)->buyer_name ?? 'N/A',
+                'garment_type'       => $row->garment_type ?? 'N/A',
+                'total_order_qty'    => $totalOrder,
+                'total_send_qty'     => $totalSend,
+                'total_receive_qty'  => $totalReceive,
+                'date'               => $row->date ? Carbon::parse($row->date)->format('M d, Y') : '',
+                'actions'            => view('embroideries.partials.actions', ['embroidery' => $row])->render(),
+            ];
+        });
+
+        // DataTables client-side expects { data: [...] }
+        return response()->json(['data' => $rows]);
     }
+
+    return view('embroideries.view');
+}
+
 
     /**
      * Show the form for creating a new resource.

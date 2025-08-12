@@ -24,7 +24,7 @@ class FinishingStoreRequest extends FormRequest
         return [
             'user_id' => 'required|numeric',
             'order_id' => 'required|numeric',
-            'thread_cutting' => 'nullable|numeric',
+            'thread_cutting' => 'required|numeric',
             'qc_check' => 'nullable|numeric',
             'button_rivet_attach' => 'nullable|numeric',
             'iron' => 'nullable|numeric',
