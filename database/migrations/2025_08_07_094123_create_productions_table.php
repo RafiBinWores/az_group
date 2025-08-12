@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('productions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('order_id')->constrained('orders')->onDelete('cascade');
-            $table->date('garment_date');
+            $table->date('garment_type');
             $table->json('production_data');
             $table->date('date');
             $table->softDeletes();
